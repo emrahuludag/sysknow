@@ -6,5 +6,5 @@
 
 [Home](README.md)
 [Github](https://github.com/emrahuludag)
-[Linkedin](https://linkedin.com/emrahuludag)
+[Linkedin](https://linkedin.com/in/emrahuludag)
 
