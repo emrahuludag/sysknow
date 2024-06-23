@@ -1,0 +1,3 @@
+# Linux System Knowledge
+
+Linux, Openshift, Kubernetes ve çeşitli open-source uygulamalarla ilgili edindiğim bilgi, not ve tecrübelerimi paylaştığım kişisel knowledge base...
