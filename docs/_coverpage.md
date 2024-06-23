@@ -1,6 +1,6 @@
-![logo](https://github.com/emrahuludag/myknowledgebase/blob/50bc67ce31a62354941ff6defcef8694dbe9f534/docs/logo.png?raw=true ':size=20%')
+![logo](./logo.png?raw=true ':size=5%')
 
-## Linux Systems Knowledge Base
+## Linux System Knowledge
 
 - **Linux** - **Openshift** - **Kubernetes** - **Ansible** - **Security** - **OpenSource**
 

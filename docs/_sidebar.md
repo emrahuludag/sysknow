@@ -10,5 +10,7 @@
 - [AWX](/awx/)
 - [Ansible](/ansible/)
 
+<footer id="mb-footer"></footer>
+
 
 <!-- - [Quick Start](quickstart.md) -->
