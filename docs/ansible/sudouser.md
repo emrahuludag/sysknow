@@ -1,4 +1,3 @@
-
 # Ansible ile Sudo Yetkili Kullanıcı Oluşturma
 ![](./img/ansiblerhellogo.png)
 

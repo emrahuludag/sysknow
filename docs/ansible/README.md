@@ -6,3 +6,4 @@
 - [Ansible ile Hedef Sunucularda Erişim Testi](./ansible/remoteporttest)
 - [Ansible İle SSH Servisindeki CBC KexAlgorithms Bulguların Kapatılması](./ansible/sshvuln)
 - [Ansible ile Sudo Yetkili Kullanıcı Oluşturma](./ansible/sudouser)
+- [Ansible ile Linux sunucularda root user password değiştirilmesi](ansible/change-ssh-password.md)
