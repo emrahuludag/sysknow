@@ -2,6 +2,14 @@
 
 Yönetmekte olduğunuz sunucularda root user gibi kullanıcıların parolasının rutin olarak değiştirilmesi ciddi bir iştir. Bir Pam çözümünüz yoksa veya herhangi bir otomasyon toolu kullanmıyorsanız yönetmiş olduğunuz sistemin büyüklüğüne göre ciddi zaman kaybı ve efor getirmektedir. Aşağıdaki paylaşmış olduğum örnekte  **root** kullanıcısına ait parolayı hedef sunucularda değiştirir, expire düzenlemesi yapar ve switch user yaparak değiştirmiş olduğu parolayı teyit etmesini sağlar. Ayrıca playbook'u çalıştırdığınız sunucunuda bir csv dosyasında parolayı kayıt eder.
 
+
+> [!Warning|style:flat]
+> Ansible'da yeniyseniz production sistemlerde çalıştırmadan önce her zaman test ortamlarınızda test etmeniz önerilir.
+
+
+> [!Attention|style:flat]
+> Parola değiştirmek için hedef sunucularda çalıştıracağınız userı **-u username** ile belirtebilirsiniz. Burada çalıştırılan user ansible.cfg dosyasında remote_user: admin tanımı yapılarak playbok çalıştırılmıştır.
+
 ### Playbook Dosyaları
 ```bash
 git clone https://github.com/emrahuludag/ansible-root-pass-change.git
@@ -153,10 +161,18 @@ Failure Login abc --------------------------------------------------------------
 Playbook run took 0 days, 0 hours, 0 minutes, 14 seconds
 ```
 
+
+```
+cat password.csv
+Date,Hostname,IP,Username,Password
+2024-06-24,srv01,10.0.0.1,root,test123
+2024-06-24,srv02,10.0.0.2,root,test123
+```
+
 ---
 # Best Practice
 ## Ansible Vault Kullanımı
-Root parolasını vault secret dosyası oluştururak playbook'un buradan okumasını sağlayabilirsiniz. main.yaml dosyasında aşağıdaki satır eklenir ve vault oluşturulur.
+Root parolasını vault ile secret dosyası oluşturarak playbook'un buradan okumasını sağlayabilirsiniz. main.yaml dosyasında aşağıdaki satır eklenir ve vault oluşturduktan sonra playbook çalıştırılır.
 
 **main.yaml dosyanızda;**
 ```bash
@@ -185,5 +201,4 @@ echo "vault-pass" > password.txt
 chmod 600 password.txt
 ansible-playbook main.yml -kK -e username=root --vault-password-file=password.txt
 ```
-
-## Root passwordun random olarak tüm sunucularda farklı değiştirilmesi
+---
