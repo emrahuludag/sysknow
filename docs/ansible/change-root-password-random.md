@@ -4,7 +4,7 @@
 # Ansible ile Linux sunucularda root user random password ile değiştirilmesi
 
 
-[Ansible ile Linux sunucularda root user password değiştirilmesi](https://emrahuludag.github.io/sysknow/#/ansible/change-ssh-password) konusuna sunucularda root user parolasının değiştirilmesini ele almıştık. Burada daha complex haline getirip tüm sunucularda root parolasını **farklı** olacak şekilde değiştirilmesi ve bu parolaların daha sonra safe manager'a eklenmesi için bir CSV file'a export alınacaktır.
+[Ansible ile Linux sunucularda root user password değiştirilmesi](https://emrahuludag.github.io/sysknow/#/ansible/change-ssh-password) ile linux sunucularda root user parolasının değiştirilmesini ele almıştık. Burada daha complex haline getirip tüm sunucularda root parolasını **farklı** olacak şekilde değiştirilmesi ve bu parolaların daha sonra safe manager'a eklenmesi için bir CSV file'a export alınacaktır.
 
 > [!Warning|style:flat]
 > Ansible'da yeniyseniz production sistemlerde çalıştırmadan önce her zaman test ortamlarınızda test etmeniz önerilir.
