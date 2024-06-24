@@ -10,6 +10,7 @@
   - [Ansible İle SSH Servisindeki CBC, KexAlgorithms Bulguların Kapatılması](ansible/sshvuln.md)
   - [Ansible Lineinfile Modülü ile Yapılandırma](ansible/lineinfile.md)
   - [Ansible ile Linux sunucularda root user password değiştirilmesi](ansible/change-ssh-password.md)
+  - [Ansible ile Linux sunucularda root user password değiştirilmesi 2](ansible/change-root-password-random.md)
 * [Rancher](/rancher/)
   - [Ansible İle RKE2 Kubernetes Cluster Kurulumu](rancher/rke2clusterinstall.md)
   - [Ansible İle RKE2 Kubernetes Cluster Üzerinde Rancher UI Kurulumu](rancher/rke2installui.md)

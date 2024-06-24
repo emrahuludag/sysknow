@@ -7,3 +7,4 @@
 - [Ansible İle SSH Servisindeki CBC KexAlgorithms Bulguların Kapatılması](./ansible/sshvuln)
 - [Ansible ile Sudo Yetkili Kullanıcı Oluşturma](./ansible/sudouser)
 - [Ansible ile Linux sunucularda root user password değiştirilmesi](ansible/change-ssh-password.md)
+- [Ansible ile Linux sunucularda root user random password ile değiştirilmesi](ansible/change-root-password-random.md)
