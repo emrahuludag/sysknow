@@ -163,7 +163,7 @@ Playbook run took 0 days, 0 hours, 0 minutes, 14 seconds
 
 
 ```
-**cat password.csv**
+cat password.csv
 Date,Hostname,IP,Username,Password
 2024-06-24,srv01,10.0.0.1,root,test123
 2024-06-24,srv02,10.0.0.2,root,test123
@@ -183,7 +183,7 @@ Root parolasını vault ile secret dosyası oluşturarak playbook'un buradan oku
 **Vault oluşturulması;**
 
 ```bash
-**ansible-vault create vault.yml**
+ansible-vault create vault.yml
 New Vault password: 
 Confirm New Vault password: 
 ```
@@ -191,13 +191,13 @@ Confirm New Vault password:
 ```bash
 Vault değiştirilmesi;
 
-**ansible-vault edit vault.yml**
+ansible-vault edit vault.yml
 ```
 
 **Playbook çalıştırılması**
 ```bash
-**echo "vault-pass" > password.txt**
-**chmod 600 password.txt**
-**ansible-playbook main.yml -kK -e username=root --vault-password-file=password.txt**
+echo "vault-pass" > password.txt
+chmod 600 password.txt
+ansible-playbook main.yml -kK -e username=root --vault-password-file=password.txt
 ```
 ---
