@@ -3,8 +3,10 @@
 
 # Ansible ile Linux sunucularda root user password değiştirilmesi
 
-Yönetmekte olduğunuz sunucularda root user gibi kullanıcıların parolasının rutin olarak değiştirilmesi ciddi bir iştir. Bir Pam çözümünüz yoksa veya herhangi bir otomasyon toolu kullanmıyorsanız yönetmiş olduğunuz sistemin büyüklüğüne göre ciddi zaman kaybı ve efor getirmektedir. Aşağıdaki paylaşmış olduğum örnekte  **root** kullanıcısına ait parolayı hedef sunucularda değiştirir, expire düzenlemesi yapar ve switch user yaparak değiştirmiş olduğu parolayı teyit etmesini sağlar. Ayrıca playbook'u çalıştırdığınız sunucunuda bir csv dosyasında parolayı kayıt eder.
 
+Yönetmekte olduğunuz sunucularda root user gibi kullanıcıların parolasının rutin olarak değiştirilmesi ciddi bir iştir. Bir Pam çözümünüz yoksa veya herhangi bir otomasyon tool'u kullanmıyorsanız yönetmiş olduğunuz sistemin büyüklüğüne göre ciddi zaman kaybı ve efor getirmektedir. Dolayısı ile tekrarlayan görevlerin otomasyonu çok önemlidir çünkü maliyetleri düşürür ve insan hatası olasılığını ortadan kaldırırken doğruluğu, üretkenliği ve verimliliği artırır. Ayrıca, otomasyon çözümleri operasyonları, müşteri desteğini ve pazarlama görevlerini kolaylaştırmak için kullanılabilir.
+
+Aşağıdaki paylaşmış olduğum örnekte  **root** kullanıcısına ait parolayı hedef sunucularda değiştirir, expire düzenlemesi yapar ve switch user yaparak değiştirmiş olduğu parolayı teyit etmesini sağlar. Ayrıca playbook'u çalıştırdığınız sunucunuda bir csv dosyasında parolayı kayıt eder.
 
 > [!Warning|style:flat]
 > Ansible'da yeniyseniz production sistemlerde çalıştırmadan önce her zaman test ortamlarınızda test etmeniz önerilir.
