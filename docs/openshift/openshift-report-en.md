@@ -89,7 +89,8 @@ ansible-playbook ocp4-report.yml
 
 # Sample Report
 
-[ Click OpenShift Full Sample Report](./openshift/img/openshift-sample-report.html)
+[Click OpenShift Full Sample Report](https://github.com/emrahuludag/sysknow/raw/main/docs/openshift/img/openshift-sample-report.html)
+
 
 ![](./img/ocp-report-sample01.png? ':size=80%')
 ![](./img/ocp-report-sample02.png? ':size=80%')
