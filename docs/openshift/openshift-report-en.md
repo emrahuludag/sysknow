@@ -89,4 +89,4 @@ ansible-playbook ocp4-report.yml
 
 # Sample Report
 
-<iframe src="./img/openshift-sample-report.html" width="80%" height="200"></iframe>
+<iframe src="./img/OpenShift_ASITE_exampledomain.local_Cluster-Overview-Report_12-11-2024_09-24.html" width="80%" height="200"></iframe>

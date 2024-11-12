@@ -1,0 +1,4501 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title> A-SITE test.exampledomain.local Openshift Health-Check Report</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+        }
+        .ocp .header, .ocp .footer {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 10px 20px;
+            background-color: grey;
+            color: white;
+        }
+       .ocp .header h1, .ocp .footer {
+            margin: 0;
+            font-size: 24px;
+            text-align: center;
+            flex-grow: 1;
+        }
+        .ocp .header h2 {
+            margin: 0;
+            font-size: 10px;
+            text-align: center;
+            flex-grow: 1;
+        }
+        .ocp .header .date {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        .ocp .header .logo {
+            width: 200px;
+            height: 52px;
+        }
+        .ocp .footer {
+            font-size: 8px;
+            padding: 5px 20px;
+        }
+        .ocp .date {
+            font-size: 14px;
+            text-align: right;
+        }
+        .ocp .tabs {
+            display: flex;
+            justify-content: center;
+            background-color: #333;
+            flex-wrap: wrap;
+            border-bottom: 2px solid #ddd;
+        }
+        .ocp .tabs button {
+            background-color: #444;
+            color: white;
+            padding: 5px 10px;
+           <!-- padding: 14px 20px; -->
+            border: none;
+            cursor: pointer;
+            transition: background-color 0.3s;
+            border-radius: 12px;
+            margin: 5px;
+            font-weight: bold;
+        }
+        .ocp .tabs button:hover {
+            background-color: #ddd;
+            color: black;
+        }
+        .ocp .tab-content {
+            display: none;
+            padding: 5px;   /* menu uzaklik */
+            flex-grow: 1;
+        }
+        .ocp .tab-content.active {
+            display: block;
+        }
+        .ocp .grid-container {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            grid-template-rows: 1fr 1fr;
+            gap: 5px;
+            padding: 3px;
+        }
+        .ocp .grid-item {
+           <!-- border: 1px solid #ddd; -->
+            padding: 3px;
+        }
+        .ocp .grid-container2 {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 3px;
+            padding: 5px;
+        }
+
+        .ocp .grid-item2 {
+           <!-- border: 1px solid #ddd; -->
+            padding: 5px;
+        }
+        .ocp h2 {
+            text-align: center;
+        }
+        .ocp  table {
+            width: 70%;
+            margin: auto;
+            border-collapse: collapse;
+        }
+        .ocp th, td {
+            border: 1px solid #ddd;
+            padding: 8px;
+            text-align: center;
+            white-space: nowrap;
+        }
+        .ocp th {
+            background-color: #333;
+            color: white;
+        }
+        @media (max-width: 600px) {
+           .ocp .tabs button {
+                width: 100%;
+                margin: 2px 0;
+            }
+        }
+        .ocp .footer {
+            position: fixed;
+            bottom: 0;
+            width: 100%;
+        }
+        .ocp .green-box {
+        <!-- background-color: lightgreen; -->
+        color: black;
+        border: none;
+        border-radius: 15px;
+        padding: 5px 10px;
+         <!-- font-weight: bold; -->
+        }
+        .ocp .red-box {
+        background-color: lightcoral;
+        color: white;
+        border: none;
+        border-radius: 15px;
+        padding: 5px 10px;
+        <!-- font-weight: bold; -->
+        }
+        .ocp .node-warn-section, .co-warn-section {
+            margin: 1; 
+            padding: 1; 
+        }
+    </style>
+    <script>
+        function openTab(evt, tabName) {
+            var i, tabcontent, tablinks;
+            tabcontent = document.getElementsByClassName("tab-content");
+            for (i = 0; i < tabcontent.length; i++) {
+                tabcontent[i].style.display = "none";
+            }
+            tablinks = document.getElementsByClassName("tablinks");
+            for (i = 0; i < tablinks.length; i++) {
+                tablinks[i].className = tablinks[i].className.replace(" active", "");
+            }
+            document.getElementById(tabName).style.display = "block";
+            evt.currentTarget.className += " active";
+        }
+
+function filterTable(tableId) {
+    const table = document.getElementById(tableId);
+    const rows = table.getElementsByTagName("tr");
+    const inputs = table.querySelectorAll("input[type='text']");
+    const filters = Array.from(inputs).map(input => input.value.toLowerCase());
+
+    for (let i = 1; i < rows.length; i++) { 
+        const cells = rows[i].getElementsByTagName("td");
+        let rowVisible = true;
+
+        for (let j = 0; j < filters.length; j++) {
+             if (cells[j] && !cells[j].innerText.toLowerCase().includes(filters[j])) {
+           
+                rowVisible = false;
+                break; 
+            }
+        }
+
+        rows[i].style.display = rowVisible ? "" : "none";
+    }
+}
+
+function sortTable(tableId, columnIndex, order) {
+    const table = document.getElementById(tableId);
+    const rows = Array.from(table.rows).slice(1);
+
+    rows.sort((a, b) => {
+        const cellA = a.cells[columnIndex].innerText;
+        const cellB = b.cells[columnIndex].innerText;
+
+        
+        if (order === 'asc') {
+            return cellA.localeCompare(cellB);
+        } else {
+            return cellB.localeCompare(cellA);
+        }
+    });
+
+    
+    rows.forEach(row => table.appendChild(row));
+}
+    </script>
+</head>
+<body>
+
+<div class="ocp">
+<div class="header">
+    <div><img src="data:image/png;base64,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" alt="Logo 1" width="200" height="52"></div>
+    <div class="date">
+        <h1> A-SITE test.exampledomain.local Health-Check Report</h1>
+        <h2>Report Date 12-11-2024 Time: 09:24  UTC</h2>
+    </div>
+    <div><img src="data:image/png;base64,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" alt="Logo 1" width="200" height="52"></div>
+</div>
+
+
+<div class="tabs">
+    <button class="tablinks" onclick="openTab(event, 'nodestatus')">Nodes</button>
+    <div class="divider"></div>
+    <button class="tablinks" onclick="openTab(event, 'nodehealth')">Node Health</button>
+    <div class="divider"></div>
+    <button class="tablinks" onclick="openTab(event, 'machine')">Machine</button>
+    <div class="divider"></div>
+    <button class="tablinks" onclick="openTab(event, 'operator')">Operator</button>
+    <div class="divider"></div>
+    <button class="tablinks" onclick="openTab(event, 'applications')">Applications</button>
+    <div class="divider"></div>
+    <button class="tablinks" onclick="openTab(event, 'daemonset')">Daemonsets</button>
+    <div class="divider"></div>
+    <button class="tablinks" onclick="openTab(event, 'deployments')">Deployments</button>
+    <div class="divider"></div>
+    <button class="tablinks" onclick="openTab(event, 'namespaces')">Namespaces</button>
+    <div class="divider"></div>
+    <button class="tablinks" onclick="openTab(event, 'alerts')">Alerts</button>
+    <div class="divider"></div>
+    <button class="tablinks" onclick="openTab(event, 'podhealth')">POD's Health</button>
+    <div class="divider"></div>
+    <button class="tablinks" onclick="openTab(event, 'poddetails')">POD's Details</button>
+    <div class="divider"></div>
+    <button class="tablinks" onclick="openTab(event, 'toppod')">Top POD</button>
+    <div class="divider"></div>
+    <button class="tablinks" onclick="openTab(event, 'storage')">Storage</button>
+    <div class="divider"></div>
+    <button class="tablinks" onclick="openTab(event, 'routecert')">Route and Certification</button>
+    <div class="divider"></div>
+    <button class="tablinks" onclick="openTab(event, 'upgrade')">Upgrade</button>
+    <div class="divider"></div>
+    <button class="tablinks" onclick="openTab(event, 'users')">Users</button>
+</div>
+
+<div>
+  <div class="node-warn-section">
+            <h2 style="background-color: #d3ebdb; color: #306c3e;">The OpenShift cluster nodes are currently in a healthy state. There are no issues with nodes </h2>
+        </div>
+  <div class="co-warn-section">
+            <!-- clear bar -->
+        </div>
+</div>
+
+<div id="nodestatus" class="tab-content active">
+    <div class="grid-container">
+        <div class="grid-item">
+            <h2>Cluster Resources</h2>
+            <table border="1">
+    <thead>
+        <tr>
+            <th>Role</th>
+            <th>Node Count</th>
+            <th>Cpu Total</th>
+            <th>Memory Total (Mb)</th>
+        </tr>
+    </thead>
+    <tbody>
+                        <tr            
+                            style="background-color: white;"
+            >
+            <td>master</td>
+            <td>3</td>
+            <td>24</td> 
+            <td>47984</td>
+        </tr>
+                        <tr            
+                            style="background-color: #f0f0f0;"
+            >
+            <td>worker</td>
+            <td>7</td>
+            <td>42</td> 
+            <td>111967</td>
+        </tr>
+            </tbody>
+</table>
+<table border="1">
+    <thead>
+        <tr>
+            <th>Name</th>
+            <th>vCpu</th>
+            <th>Cpu Usage%</th>
+            <th>Memory Total / Free (Mb)</th>
+            <th>Memory Usage %</th>
+        </tr>
+    </thead>
+    <tbody>
+                        <tr 
+                            style="background-color: white;"
+            >
+            <td style="white-space: nowrap"><strong>trdev-sjfhz-master-0</strong></td>
+            <td>8</td>
+            
+            <!-- CPU% Column -->
+            <td>
+                                <div style="width: 100%; background-color: #ddd; position: relative; height: 20px; border-radius: 5px;">
+                    <div style="width: 7.0%; background-color: 
+                                            lightgreen;
+                                        color: white; text-align: center; height: 100%; border-radius: 5px 0 0 5px;">
+                        <span style="position: absolute; left: 50%; transform: translateX(-50%); color: white;"><strong>7%</strong></span>
+                    </div>
+                </div>
+            </td>
+
+            <!-- MEMORY (MB) Column -->
+            <td>15994.87/9550.40</td>
+            <td>
+                                <div style="width: 100%; background-color: #ddd; position: relative; height: 20px; border-radius: 5px;">
+                    <div style="width: 64.0%; background-color: 
+                                            orange;
+                                        color: white; text-align: center; height: 100%; border-radius: 5px 0 0 5px;">
+                        <span style="position: absolute; left: 50%; transform: translateX(-50%); color: white;"><strong>64%</strong></span>
+                    </div>
+                </div>
+            </td>
+        </tr>
+                        <tr 
+                            style="background-color: #f0f0f0;"
+            >
+            <td style="white-space: nowrap"><strong>trdev-sjfhz-master-1</strong></td>
+            <td>8</td>
+            
+            <!-- CPU% Column -->
+            <td>
+                                <div style="width: 100%; background-color: #ddd; position: relative; height: 20px; border-radius: 5px;">
+                    <div style="width: 7.0%; background-color: 
+                                            lightgreen;
+                                        color: white; text-align: center; height: 100%; border-radius: 5px 0 0 5px;">
+                        <span style="position: absolute; left: 50%; transform: translateX(-50%); color: white;"><strong>7%</strong></span>
+                    </div>
+                </div>
+            </td>
+
+            <!-- MEMORY (MB) Column -->
+            <td>15994.86/7862.91</td>
+            <td>
+                                <div style="width: 100%; background-color: #ddd; position: relative; height: 20px; border-radius: 5px;">
+                    <div style="width: 52.0%; background-color: 
+                                            orange;
+                                        color: white; text-align: center; height: 100%; border-radius: 5px 0 0 5px;">
+                        <span style="position: absolute; left: 50%; transform: translateX(-50%); color: white;"><strong>52%</strong></span>
+                    </div>
+                </div>
+            </td>
+        </tr>
+                        <tr 
+                            style="background-color: white;"
+            >
+            <td style="white-space: nowrap"><strong>trdev-sjfhz-master-2</strong></td>
+            <td>8</td>
+            
+            <!-- CPU% Column -->
+            <td>
+                                <div style="width: 100%; background-color: #ddd; position: relative; height: 20px; border-radius: 5px;">
+                    <div style="width: 11.0%; background-color: 
+                                            lightgreen;
+                                        color: white; text-align: center; height: 100%; border-radius: 5px 0 0 5px;">
+                        <span style="position: absolute; left: 50%; transform: translateX(-50%); color: white;"><strong>11%</strong></span>
+                    </div>
+                </div>
+            </td>
+
+            <!-- MEMORY (MB) Column -->
+            <td>15994.87/12429.60</td>
+            <td>
+                                <div style="width: 100%; background-color: #ddd; position: relative; height: 20px; border-radius: 5px;">
+                    <div style="width: 83.0%; background-color: 
+                                            red;
+                                        color: white; text-align: center; height: 100%; border-radius: 5px 0 0 5px;">
+                        <span style="position: absolute; left: 50%; transform: translateX(-50%); color: white;"><strong>83%</strong></span>
+                    </div>
+                </div>
+            </td>
+        </tr>
+                        <tr 
+                            style="background-color: #f0f0f0;"
+            >
+            <td style="white-space: nowrap"><strong>trdev-sjfhz-worker-2hqsv</strong></td>
+            <td>6</td>
+            
+            <!-- CPU% Column -->
+            <td>
+                                <div style="width: 100%; background-color: #ddd; position: relative; height: 20px; border-radius: 5px;">
+                    <div style="width: 15.0%; background-color: 
+                                            lightgreen;
+                                        color: white; text-align: center; height: 100%; border-radius: 5px 0 0 5px;">
+                        <span style="position: absolute; left: 50%; transform: translateX(-50%); color: white;"><strong>15%</strong></span>
+                    </div>
+                </div>
+            </td>
+
+            <!-- MEMORY (MB) Column -->
+            <td>15995.30/12519.50</td>
+            <td>
+                                <div style="width: 100%; background-color: #ddd; position: relative; height: 20px; border-radius: 5px;">
+                    <div style="width: 84.0%; background-color: 
+                                            red;
+                                        color: white; text-align: center; height: 100%; border-radius: 5px 0 0 5px;">
+                        <span style="position: absolute; left: 50%; transform: translateX(-50%); color: white;"><strong>84%</strong></span>
+                    </div>
+                </div>
+            </td>
+        </tr>
+                        <tr 
+                            style="background-color: white;"
+            >
+            <td style="white-space: nowrap"><strong>trdev-sjfhz-worker-fdvl6</strong></td>
+            <td>6</td>
+            
+            <!-- CPU% Column -->
+            <td>
+                                <div style="width: 100%; background-color: #ddd; position: relative; height: 20px; border-radius: 5px;">
+                    <div style="width: 5.0%; background-color: 
+                                            lightgreen;
+                                        color: white; text-align: center; height: 100%; border-radius: 5px 0 0 5px;">
+                        <span style="position: absolute; left: 50%; transform: translateX(-50%); color: white;"><strong>5%</strong></span>
+                    </div>
+                </div>
+            </td>
+
+            <!-- MEMORY (MB) Column -->
+            <td>15995.30/8438.77</td>
+            <td>
+                                <div style="width: 100%; background-color: #ddd; position: relative; height: 20px; border-radius: 5px;">
+                    <div style="width: 56.0%; background-color: 
+                                            orange;
+                                        color: white; text-align: center; height: 100%; border-radius: 5px 0 0 5px;">
+                        <span style="position: absolute; left: 50%; transform: translateX(-50%); color: white;"><strong>56%</strong></span>
+                    </div>
+                </div>
+            </td>
+        </tr>
+                        <tr 
+                            style="background-color: #f0f0f0;"
+            >
+            <td style="white-space: nowrap"><strong>trdev-sjfhz-worker-fr8w6</strong></td>
+            <td>6</td>
+            
+            <!-- CPU% Column -->
+            <td>
+                                <div style="width: 100%; background-color: #ddd; position: relative; height: 20px; border-radius: 5px;">
+                    <div style="width: 18.0%; background-color: 
+                                            lightgreen;
+                                        color: white; text-align: center; height: 100%; border-radius: 5px 0 0 5px;">
+                        <span style="position: absolute; left: 50%; transform: translateX(-50%); color: white;"><strong>18%</strong></span>
+                    </div>
+                </div>
+            </td>
+
+            <!-- MEMORY (MB) Column -->
+            <td>15995.30/13096.19</td>
+            <td>
+                                <div style="width: 100%; background-color: #ddd; position: relative; height: 20px; border-radius: 5px;">
+                    <div style="width: 88.0%; background-color: 
+                                            red;
+                                        color: white; text-align: center; height: 100%; border-radius: 5px 0 0 5px;">
+                        <span style="position: absolute; left: 50%; transform: translateX(-50%); color: white;"><strong>88%</strong></span>
+                    </div>
+                </div>
+            </td>
+        </tr>
+                        <tr 
+                            style="background-color: white;"
+            >
+            <td style="white-space: nowrap"><strong>trdev-sjfhz-worker-k88j6</strong></td>
+            <td>6</td>
+            
+            <!-- CPU% Column -->
+            <td>
+                                <div style="width: 100%; background-color: #ddd; position: relative; height: 20px; border-radius: 5px;">
+                    <div style="width: 5.0%; background-color: 
+                                            lightgreen;
+                                        color: white; text-align: center; height: 100%; border-radius: 5px 0 0 5px;">
+                        <span style="position: absolute; left: 50%; transform: translateX(-50%); color: white;"><strong>5%</strong></span>
+                    </div>
+                </div>
+            </td>
+
+            <!-- MEMORY (MB) Column -->
+            <td>15995.29/7823.31</td>
+            <td>
+                                <div style="width: 100%; background-color: #ddd; position: relative; height: 20px; border-radius: 5px;">
+                    <div style="width: 52.0%; background-color: 
+                                            orange;
+                                        color: white; text-align: center; height: 100%; border-radius: 5px 0 0 5px;">
+                        <span style="position: absolute; left: 50%; transform: translateX(-50%); color: white;"><strong>52%</strong></span>
+                    </div>
+                </div>
+            </td>
+        </tr>
+                        <tr 
+                            style="background-color: #f0f0f0;"
+            >
+            <td style="white-space: nowrap"><strong>trdev-sjfhz-worker-kn4xp</strong></td>
+            <td>6</td>
+            
+            <!-- CPU% Column -->
+            <td>
+                                <div style="width: 100%; background-color: #ddd; position: relative; height: 20px; border-radius: 5px;">
+                    <div style="width: 9.0%; background-color: 
+                                            lightgreen;
+                                        color: white; text-align: center; height: 100%; border-radius: 5px 0 0 5px;">
+                        <span style="position: absolute; left: 50%; transform: translateX(-50%); color: white;"><strong>9%</strong></span>
+                    </div>
+                </div>
+            </td>
+
+            <!-- MEMORY (MB) Column -->
+            <td>15995.30/10024.68</td>
+            <td>
+                                <div style="width: 100%; background-color: #ddd; position: relative; height: 20px; border-radius: 5px;">
+                    <div style="width: 67.0%; background-color: 
+                                            orange;
+                                        color: white; text-align: center; height: 100%; border-radius: 5px 0 0 5px;">
+                        <span style="position: absolute; left: 50%; transform: translateX(-50%); color: white;"><strong>67%</strong></span>
+                    </div>
+                </div>
+            </td>
+        </tr>
+                        <tr 
+                            style="background-color: white;"
+            >
+            <td style="white-space: nowrap"><strong>trdev-sjfhz-worker-wlxp6</strong></td>
+            <td>6</td>
+            
+            <!-- CPU% Column -->
+            <td>
+                                <div style="width: 100%; background-color: #ddd; position: relative; height: 20px; border-radius: 5px;">
+                    <div style="width: 11.0%; background-color: 
+                                            lightgreen;
+                                        color: white; text-align: center; height: 100%; border-radius: 5px 0 0 5px;">
+                        <span style="position: absolute; left: 50%; transform: translateX(-50%); color: white;"><strong>11%</strong></span>
+                    </div>
+                </div>
+            </td>
+
+            <!-- MEMORY (MB) Column -->
+            <td>15995.29/11028.10</td>
+            <td>
+                                <div style="width: 100%; background-color: #ddd; position: relative; height: 20px; border-radius: 5px;">
+                    <div style="width: 74.0%; background-color: 
+                                            orange;
+                                        color: white; text-align: center; height: 100%; border-radius: 5px 0 0 5px;">
+                        <span style="position: absolute; left: 50%; transform: translateX(-50%); color: white;"><strong>74%</strong></span>
+                    </div>
+                </div>
+            </td>
+        </tr>
+                        <tr 
+                            style="background-color: #f0f0f0;"
+            >
+            <td style="white-space: nowrap"><strong>trdev-sjfhz-worker-xh9sg</strong></td>
+            <td>6</td>
+            
+            <!-- CPU% Column -->
+            <td>
+                                <div style="width: 100%; background-color: #ddd; position: relative; height: 20px; border-radius: 5px;">
+                    <div style="width: 4.0%; background-color: 
+                                            lightgreen;
+                                        color: white; text-align: center; height: 100%; border-radius: 5px 0 0 5px;">
+                        <span style="position: absolute; left: 50%; transform: translateX(-50%); color: white;"><strong>4%</strong></span>
+                    </div>
+                </div>
+            </td>
+
+            <!-- MEMORY (MB) Column -->
+            <td>15995.30/8800.18</td>
+            <td>
+                                <div style="width: 100%; background-color: #ddd; position: relative; height: 20px; border-radius: 5px;">
+                    <div style="width: 59.0%; background-color: 
+                                            orange;
+                                        color: white; text-align: center; height: 100%; border-radius: 5px 0 0 5px;">
+                        <span style="position: absolute; left: 50%; transform: translateX(-50%); color: white;"><strong>59%</strong></span>
+                    </div>
+                </div>
+            </td>
+        </tr>
+            </tbody>
+</table>
+        </div>
+        <div class="grid-item">
+            <h2>Node Status</h2>
+            <table border="1">
+    <thead>
+        <tr>
+            <th>Name</th>
+            <th>Status</th>
+            <th>Roles</th>
+            <th>Age</th>
+            <th>Version</th>
+            <th>Node-IP</th>
+        </tr>
+    </thead>
+    <tbody>
+                        <tr 
+                            style="background-color: white;"
+            >
+            <td style="white-space: nowrap"><strong>trdev-sjfhz-master-0</strong></td>
+                            <td>Ready</td>
+                <td>master</td>
+                <td>10d</td>
+                <td>v1.27.14+95b99ee</td>
+                <td>1.1.1.33</td>
+                    </tr>
+                        <tr 
+                            style="background-color: #f0f0f0;"
+            >
+            <td style="white-space: nowrap"><strong>trdev-sjfhz-master-1</strong></td>
+                            <td>Ready</td>
+                <td>master</td>
+                <td>10d</td>
+                <td>v1.27.14+95b99ee</td>
+                <td>1.1.1.31</td>
+                    </tr>
+                        <tr 
+                            style="background-color: white;"
+            >
+            <td style="white-space: nowrap"><strong>trdev-sjfhz-master-2</strong></td>
+                            <td>Ready</td>
+                <td>master</td>
+                <td>10d</td>
+                <td>v1.27.14+95b99ee</td>
+                <td>1.1.1.32</td>
+                    </tr>
+                        <tr 
+                            style="background-color: #f0f0f0;"
+            >
+            <td style="white-space: nowrap"><strong>trdev-sjfhz-worker-2hqsv</strong></td>
+                            <td>Ready</td>
+                <td>worker</td>
+                <td>10d</td>
+                <td>v1.27.14+95b99ee</td>
+                <td>1.1.1.35</td>
+                    </tr>
+                        <tr 
+                            style="background-color: white;"
+            >
+            <td style="white-space: nowrap"><strong>trdev-sjfhz-worker-fdvl6</strong></td>
+                            <td>Ready</td>
+                <td>worker</td>
+                <td>10d</td>
+                <td>v1.27.14+95b99ee</td>
+                <td>1.1.1.36</td>
+                    </tr>
+                        <tr 
+                            style="background-color: #f0f0f0;"
+            >
+            <td style="white-space: nowrap"><strong>trdev-sjfhz-worker-fr8w6</strong></td>
+                            <td>Ready</td>
+                <td>worker</td>
+                <td>10d</td>
+                <td>v1.27.14+95b99ee</td>
+                <td>1.1.1.39</td>
+                    </tr>
+                        <tr 
+                            style="background-color: white;"
+            >
+            <td style="white-space: nowrap"><strong>trdev-sjfhz-worker-k88j6</strong></td>
+                            <td>Ready</td>
+                <td>worker</td>
+                <td>10d</td>
+                <td>v1.27.14+95b99ee</td>
+                <td>1.1.1.40</td>
+                    </tr>
+                        <tr 
+                            style="background-color: #f0f0f0;"
+            >
+            <td style="white-space: nowrap"><strong>trdev-sjfhz-worker-kn4xp</strong></td>
+                            <td>Ready</td>
+                <td>worker</td>
+                <td>10d</td>
+                <td>v1.27.14+95b99ee</td>
+                <td>1.1.1.34</td>
+                    </tr>
+                        <tr 
+                            style="background-color: white;"
+            >
+            <td style="white-space: nowrap"><strong>trdev-sjfhz-worker-wlxp6</strong></td>
+                            <td>Ready</td>
+                <td>worker</td>
+                <td>10d</td>
+                <td>v1.27.14+95b99ee</td>
+                <td>1.1.1.38</td>
+                    </tr>
+                        <tr 
+                            style="background-color: #f0f0f0;"
+            >
+            <td style="white-space: nowrap"><strong>trdev-sjfhz-worker-xh9sg</strong></td>
+                            <td>Ready</td>
+                <td>worker</td>
+                <td>10d</td>
+                <td>v1.27.14+95b99ee</td>
+                <td>1.1.1.37</td>
+                    </tr>
+            </tbody>
+</table>        </div>
+        <div class="grid-item">
+            <h2>Pod Distribution </h2>
+            <table border="1">
+    <thead>
+        <tr>
+            <th>Node Name</th>
+            <th>Capacity</th>
+            <th>Total Pod</th>
+
+        </tr>
+    </thead>
+    <tbody>
+                  
+        <tr 
+                            style="background-color: white;"
+            >
+            <td><strong>trdev-sjfhz-master-0</strong></td>
+            <td>250</td>
+            <td>63</td>
+        </tr>
+                  
+        <tr 
+                            style="background-color: #f0f0f0;"
+            >
+            <td><strong>trdev-sjfhz-master-1</strong></td>
+            <td>250</td>
+            <td>48</td>
+        </tr>
+                  
+        <tr 
+                            style="background-color: white;"
+            >
+            <td><strong>trdev-sjfhz-master-2</strong></td>
+            <td>250</td>
+            <td>82</td>
+        </tr>
+                  
+        <tr 
+                            style="background-color: #f0f0f0;"
+            >
+            <td><strong>trdev-sjfhz-worker-2hqsv</strong></td>
+            <td>250</td>
+            <td>39</td>
+        </tr>
+                  
+        <tr 
+                            style="background-color: white;"
+            >
+            <td><strong>trdev-sjfhz-worker-fdvl6</strong></td>
+            <td>250</td>
+            <td>28</td>
+        </tr>
+                  
+        <tr 
+                            style="background-color: #f0f0f0;"
+            >
+            <td><strong>trdev-sjfhz-worker-fr8w6</strong></td>
+            <td>250</td>
+            <td>39</td>
+        </tr>
+                  
+        <tr 
+                            style="background-color: white;"
+            >
+            <td><strong>trdev-sjfhz-worker-k88j6</strong></td>
+            <td>250</td>
+            <td>30</td>
+        </tr>
+                  
+        <tr 
+                            style="background-color: #f0f0f0;"
+            >
+            <td><strong>trdev-sjfhz-worker-kn4xp</strong></td>
+            <td>250</td>
+            <td>39</td>
+        </tr>
+                  
+        <tr 
+                            style="background-color: white;"
+            >
+            <td><strong>trdev-sjfhz-worker-wlxp6</strong></td>
+            <td>250</td>
+            <td>31</td>
+        </tr>
+                  
+        <tr 
+                            style="background-color: #f0f0f0;"
+            >
+            <td><strong>trdev-sjfhz-worker-xh9sg</strong></td>
+            <td>250</td>
+            <td>26</td>
+        </tr>
+            </tbody>
+</table>        </div>
+        <div class="grid-item">
+            <h2>Over Committed Nodes</h2>
+            <table border="1">
+    <thead>
+        <tr>
+            <th>Node</th>
+            <th>CPU Requests</th>
+            <th>CPU Limits</th>
+            <th>Memory Requests</th>
+            <th>Memory Limits</th>
+        </tr>
+    </thead>
+    <tbody>
+                        
+        <tr            
+                            style="background-color: white;"
+            >
+           
+            <td style="white-space: nowrap"><strong>trdev-sjfhz-master-0</strong></td>
+                        <!-- CPU Requests (fields[3]) -->
+            <td
+                                >
+                2867m (38%)
+            </td>
+            
+            <!-- CPU Limits (fields[4]) -->
+            <td
+                                >
+                0 (0%)
+            </td>
+
+            <!-- Memory Requests (fields[3]) -->
+            <td
+                                >
+                7806Mi (52%)
+            </td>
+            
+            <!-- Memory Limits (fields[4]) -->
+            <td
+                                >
+                0 (0%)
+            </td>
+        </tr>
+                        
+        <tr            
+                            style="background-color: #f0f0f0;"
+            >
+           
+            <td style="white-space: nowrap"><strong>trdev-sjfhz-master-1</strong></td>
+                        <!-- CPU Requests (fields[3]) -->
+            <td
+                                >
+                2319m (30%)
+            </td>
+            
+            <!-- CPU Limits (fields[4]) -->
+            <td
+                                >
+                0 (0%)
+            </td>
+
+            <!-- Memory Requests (fields[3]) -->
+            <td
+                                >
+                6142Mi (41%)
+            </td>
+            
+            <!-- Memory Limits (fields[4]) -->
+            <td
+                                >
+                0 (0%)
+            </td>
+        </tr>
+                        
+        <tr            
+                            style="background-color: white;"
+            >
+           
+            <td style="white-space: nowrap"><strong>trdev-sjfhz-master-2</strong></td>
+                        <!-- CPU Requests (fields[3]) -->
+            <td
+                                >
+                3120m (41%)
+            </td>
+            
+            <!-- CPU Limits (fields[4]) -->
+            <td
+                                >
+                0 (0%)
+            </td>
+
+            <!-- Memory Requests (fields[3]) -->
+            <td
+                                >
+                8891Mi (59%)
+            </td>
+            
+            <!-- Memory Limits (fields[4]) -->
+            <td
+                                >
+                0 (0%)
+            </td>
+        </tr>
+                        
+        <tr            
+                            style="background-color: #f0f0f0;"
+            >
+           
+            <td style="white-space: nowrap"><strong>trdev-sjfhz-worker-2hqsv</strong></td>
+                        <!-- CPU Requests (fields[3]) -->
+            <td
+                                >
+                2938m (53%)
+            </td>
+            
+            <!-- CPU Limits (fields[4]) -->
+            <td
+                                >
+                3600m (65%)
+            </td>
+
+            <!-- Memory Requests (fields[3]) -->
+            <td
+                                >
+                10368999680 (66%)
+            </td>
+            
+            <!-- Memory Limits (fields[4]) -->
+            <td
+                                                    style="background-color: red; color: white; font-weight: bold;white-space: nowrap;"
+                >
+                16201417728 (103%)
+            </td>
+        </tr>
+                        
+        <tr            
+                            style="background-color: white;"
+            >
+           
+            <td style="white-space: nowrap"><strong>trdev-sjfhz-worker-fdvl6</strong></td>
+                        <!-- CPU Requests (fields[3]) -->
+            <td
+                                >
+                2204m (40%)
+            </td>
+            
+            <!-- CPU Limits (fields[4]) -->
+            <td
+                                                    style="background-color: orange; color: white; font-weight: bold;white-space: nowrap;"
+                >
+                5200m (94%)
+            </td>
+
+            <!-- Memory Requests (fields[3]) -->
+            <td
+                                >
+                9818202368 (62%)
+            </td>
+            
+            <!-- Memory Limits (fields[4]) -->
+            <td
+                                                    style="background-color: red; color: white; font-weight: bold;white-space: nowrap;"
+                >
+                17126884352 (109%)
+            </td>
+        </tr>
+                        
+        <tr            
+                            style="background-color: #f0f0f0;"
+            >
+           
+            <td style="white-space: nowrap"><strong>trdev-sjfhz-worker-fr8w6</strong></td>
+                        <!-- CPU Requests (fields[3]) -->
+            <td
+                                >
+                3263m (59%)
+            </td>
+            
+            <!-- CPU Limits (fields[4]) -->
+            <td
+                                                    style="background-color: red; color: white; font-weight: bold;white-space: nowrap;"
+                >
+                5650m (102%)
+            </td>
+
+            <!-- Memory Requests (fields[3]) -->
+            <td
+                                >
+                11740242176 (75%)
+            </td>
+            
+            <!-- Memory Limits (fields[4]) -->
+            <td
+                                                    style="background-color: orange; color: white; font-weight: bold;white-space: nowrap;"
+                >
+                15549826048 (99%)
+            </td>
+        </tr>
+                        
+        <tr            
+                            style="background-color: white;"
+            >
+           
+            <td style="white-space: nowrap"><strong>trdev-sjfhz-worker-k88j6</strong></td>
+                        <!-- CPU Requests (fields[3]) -->
+            <td
+                                >
+                1905m (34%)
+            </td>
+            
+            <!-- CPU Limits (fields[4]) -->
+            <td
+                                >
+                4400m (80%)
+            </td>
+
+            <!-- Memory Requests (fields[3]) -->
+            <td
+                                >
+                9411354880 (60%)
+            </td>
+            
+            <!-- Memory Limits (fields[4]) -->
+            <td
+                                                    style="background-color: red; color: white; font-weight: bold;white-space: nowrap;"
+                >
+                19588940800 (125%)
+            </td>
+        </tr>
+                        
+        <tr            
+                            style="background-color: #f0f0f0;"
+            >
+           
+            <td style="white-space: nowrap"><strong>trdev-sjfhz-worker-kn4xp</strong></td>
+                        <!-- CPU Requests (fields[3]) -->
+            <td
+                                >
+                3569m (64%)
+            </td>
+            
+            <!-- CPU Limits (fields[4]) -->
+            <td
+                                                    style="background-color: red; color: white; font-weight: bold;white-space: nowrap;"
+                >
+                6850m (124%)
+            </td>
+
+            <!-- Memory Requests (fields[3]) -->
+            <td
+                                >
+                9679790336 (62%)
+            </td>
+            
+            <!-- Memory Limits (fields[4]) -->
+            <td
+                                                    style="background-color: red; color: white; font-weight: bold;white-space: nowrap;"
+                >
+                18091574272 (116%)
+            </td>
+        </tr>
+                        
+        <tr            
+                            style="background-color: white;"
+            >
+           
+            <td style="white-space: nowrap"><strong>trdev-sjfhz-worker-wlxp6</strong></td>
+                        <!-- CPU Requests (fields[3]) -->
+            <td
+                                >
+                3430m (62%)
+            </td>
+            
+            <!-- CPU Limits (fields[4]) -->
+            <td
+                                                    style="background-color: red; color: white; font-weight: bold;white-space: nowrap;"
+                >
+                10050m (182%)
+            </td>
+
+            <!-- Memory Requests (fields[3]) -->
+            <td
+                                >
+                10824172032 (69%)
+            </td>
+            
+            <!-- Memory Limits (fields[4]) -->
+            <td
+                                                    style="background-color: red; color: white; font-weight: bold;white-space: nowrap;"
+                >
+                19187828736 (123%)
+            </td>
+        </tr>
+                        
+        <tr            
+                            style="background-color: #f0f0f0;"
+            >
+           
+            <td style="white-space: nowrap"><strong>trdev-sjfhz-worker-xh9sg</strong></td>
+                        <!-- CPU Requests (fields[3]) -->
+            <td
+                                >
+                2404m (43%)
+            </td>
+            
+            <!-- CPU Limits (fields[4]) -->
+            <td
+                                >
+                4 (72%)
+            </td>
+
+            <!-- Memory Requests (fields[3]) -->
+            <td
+                                >
+                8765432064 (56%)
+            </td>
+            
+            <!-- Memory Limits (fields[4]) -->
+            <td
+                                                    style="background-color: orange; color: white; font-weight: bold;white-space: nowrap;"
+                >
+                15608546304 (100%)
+            </td>
+        </tr>
+            </tbody>
+</table>        </div>
+    </div>
+</div>
+
+<div id="machine" class="tab-content">
+    <h2>Machine Config Pool </h2>
+<table border="1">
+    <thead>
+        <tr>
+            <th>Name</th>
+            <th>Config</th>
+            <th>Updated</th>
+            <th>Updating</th>
+            <th>Degraded</th>
+            <th>Machine Count</th>
+            <th>Ready</th>
+            <th>Updated</th>
+            <th>Degraded</th>
+            <th>Age</th>
+        </tr>
+    </thead>
+    <tbody>
+                        <tr
+                            style="background-color: white;"
+            >
+            <td><strong>master</strong></td>
+            <td>rendered-master-745ecdb5795fdc28371b3891620f1f55</td>
+            <td>
+                                    True
+                            </td>
+            <td>
+                                    False
+                            </td>
+            <td>
+                                    False
+                            </td>
+            <td>3</td>
+            <td>3</td>
+            <td>3</td>
+            <td>0</td>
+            <td>10d</td>
+             <!-- <td>0</td> -->
+        </tr>
+                        <tr
+                            style="background-color: #f0f0f0;"
+            >
+            <td><strong>worker</strong></td>
+            <td>rendered-worker-89f071497690af12c6b3cc9e5f608ef6</td>
+            <td>
+                                    True
+                            </td>
+            <td>
+                                    False
+                            </td>
+            <td>
+                                    False
+                            </td>
+            <td>7</td>
+            <td>7</td>
+            <td>7</td>
+            <td>0</td>
+            <td>10d</td>
+             <!-- <td>0</td> -->
+        </tr>
+            </tbody>
+</table>
+
+<br>    
+<h2>Worker Machine Set</h2>
+<table border="1">
+    <thead>
+        <tr>
+            <th>Name</th>
+            <th>Desired</th>
+            <th>Current</th>
+            <th>Ready</th>
+            <th>Available</th>
+            <th>Age</th>
+        </tr>
+    </thead>
+    <tbody>
+                        <tr            
+                            style="background-color: white;"
+            >
+            <td>trdev-sjfhz-worker</td>
+            <td>7</td>
+            <td>7</td>
+            <td>7</td>
+            <td>7</td>
+            <td>2023-08-09T11:40:24Z</td>
+        </tr>
+            </tbody>
+</table>
+
+<h2>Machines</h2>
+<table border="1">
+    <thead>
+        <tr>
+            <th>Name</th>
+            <th>Status</th>
+            <th>vCPU</th>
+            <th>CoresPerSocket</th>
+            <th>Memory</th>
+            <th>Disk</th>
+            <th>IP</th>
+            <th>Vlan</th>
+            <th>Datacenter</th>
+            <th>Datastore</th>
+            <th>Folder</th>
+            <th>vCenter</th>
+            <th>Age</th>
+        </tr>
+    </thead>
+    <tbody>
+                        <tr            
+                            style="background-color: white;"
+            >
+            <td>trdev-sjfhz-master-0</td>
+            <td>Running</td>
+            <td>8</td>
+            <td>4</td>
+            <td>16384</td>
+            <td>120</td>
+            <td>1.1.1.33</td>
+            <td>TRDEV</td>
+            <td>TRDEV-DC</td>
+            <td>TRDEV-DS02</td>
+            <td>/TRDEV-DC/vm/trdev-sjfhz</td>
+            <td>vpshere.example.com</td>
+            <td>2023-08-09T14:31:57Z</td>
+        </tr>
+                        <tr            
+                            style="background-color: #f0f0f0;"
+            >
+            <td>trdev-sjfhz-master-1</td>
+            <td>Running</td>
+            <td>8</td>
+            <td>4</td>
+            <td>16384</td>
+            <td>120</td>
+            <td>1.1.1.31</td>
+            <td>TRDEV</td>
+            <td>TRDEV-DC</td>
+            <td>TRDEV-DS02</td>
+            <td>/TRDEV-DC/vm/trdev-sjfhz</td>
+            <td>vpshere.example.com</td>
+            <td>2023-08-09T14:31:57Z</td>
+        </tr>
+                        <tr            
+                            style="background-color: white;"
+            >
+            <td>trdev-sjfhz-master-2</td>
+            <td>Running</td>
+            <td>8</td>
+            <td>4</td>
+            <td>16384</td>
+            <td>120</td>
+            <td>1.1.1.32</td>
+            <td>TRDEV</td>
+            <td>TRDEV-DC</td>
+            <td>TRDEV-DS02</td>
+            <td>/TRDEV-DC/vm/trdev-sjfhz</td>
+            <td>vpshere.example.com</td>
+            <td>2023-08-09T14:31:57Z</td>
+        </tr>
+                        <tr            
+                            style="background-color: #f0f0f0;"
+            >
+            <td>trdev-sjfhz-worker-2hqsv</td>
+            <td>Running</td>
+            <td>6</td>
+            <td>3</td>
+            <td>16384</td>
+            <td>120</td>
+            <td>1.1.1.35</td>
+            <td>TRDEV</td>
+            <td>TRDEV-DC</td>
+            <td>TRDEV-DS02</td>
+            <td>/TRDEV-DC/vm/trdev-sjfhz</td>
+            <td>vpshere.example.com</td>
+            <td>2023-08-09T14:31:57Z</td>
+        </tr>
+                        <tr            
+                            style="background-color: white;"
+            >
+            <td>trdev-sjfhz-worker-fdvl6</td>
+            <td>Running</td>
+            <td>6</td>
+            <td>3</td>
+            <td>16384</td>
+            <td>120</td>
+            <td>1.1.1.36</td>
+            <td>TRDEV</td>
+            <td>TRDEV-DC</td>
+            <td>TRDEV-DS02</td>
+            <td>/TRDEV-DC/vm/trdev-sjfhz</td>
+            <td>vpshere.example.com</td>
+            <td>2023-08-09T14:31:57Z</td>
+        </tr>
+                        <tr            
+                            style="background-color: #f0f0f0;"
+            >
+            <td>trdev-sjfhz-worker-fr8w6</td>
+            <td>Running</td>
+            <td>6</td>
+            <td>3</td>
+            <td>16384</td>
+            <td>120</td>
+            <td>1.1.1.39</td>
+            <td>TRDEV</td>
+            <td>TRDEV-DC</td>
+            <td>TRDEV-DS02</td>
+            <td>/TRDEV-DC/vm/trdev-sjfhz</td>
+            <td>vpshere.example.com</td>
+            <td>2023-08-09T14:31:57Z</td>
+        </tr>
+                        <tr            
+                            style="background-color: white;"
+            >
+            <td>trdev-sjfhz-worker-k88j6</td>
+            <td>Running</td>
+            <td>6</td>
+            <td>3</td>
+            <td>16384</td>
+            <td>120</td>
+            <td>1.1.1.40</td>
+            <td>TRDEV</td>
+            <td>TRDEV-DC</td>
+            <td>TRDEV-DS02</td>
+            <td>/TRDEV-DC/vm/trdev-sjfhz</td>
+            <td>vpshere.example.com</td>
+            <td>2023-08-09T14:31:57Z</td>
+        </tr>
+                        <tr            
+                            style="background-color: #f0f0f0;"
+            >
+            <td>trdev-sjfhz-worker-kn4xp</td>
+            <td>Running</td>
+            <td>6</td>
+            <td>3</td>
+            <td>16384</td>
+            <td>120</td>
+            <td>1.1.1.34</td>
+            <td>TRDEV</td>
+            <td>TRDEV-DC</td>
+            <td>TRDEV-DS02</td>
+            <td>/TRDEV-DC/vm/trdev-sjfhz</td>
+            <td>vpshere.example.com</td>
+            <td>2023-08-09T14:31:57Z</td>
+        </tr>
+                        <tr            
+                            style="background-color: white;"
+            >
+            <td>trdev-sjfhz-worker-wlxp6</td>
+            <td>Running</td>
+            <td>6</td>
+            <td>3</td>
+            <td>16384</td>
+            <td>120</td>
+            <td>1.1.1.38</td>
+            <td>TRDEV</td>
+            <td>TRDEV-DC</td>
+            <td>TRDEV-DS02</td>
+            <td>/TRDEV-DC/vm/trdev-sjfhz</td>
+            <td>vpshere.example.com</td>
+            <td>2023-08-09T14:31:57Z</td>
+        </tr>
+        </tr>
+                        <tr            
+                            style="background-color: #f0f0f0;"
+            >
+            <td>trdev-sjfhz-worker-xh9sg</td>
+            <td>Running</td>
+            <td>6</td>
+            <td>3</td>
+            <td>16384</td>
+            <td>120</td>
+            <td>1.1.1.37</td>
+            <td>TRDEV</td>
+            <td>TRDEV-DC</td>
+            <td>TRDEV-DS02</td>
+            <td>/TRDEV-DC/vm/trdev-sjfhz</td>
+            <td>vpshere.example.com</td>
+            <td>2023-08-09T14:31:57Z</td>
+        </tr>
+            </tbody>
+</table></div>
+
+
+<div id="daemonset" class="tab-content">
+    <h2>Daemonset</h2>
+<table border="1" id="daemonsettable">
+    <thead>
+        <tr>
+            <th>Namespace
+                <br>
+                <span onclick="sortTable('daemonsettable', 0, 'asc')" style="cursor: pointer;">&#x25B2;</span>
+                <span onclick="sortTable('daemonsettable', 0, 'desc')" style="cursor: pointer;">&#x25BC;</span>
+                <input type="text" onkeyup="filterTable('daemonsettable')" placeholder="Search.."> 
+            </th>
+            <th>Name
+                <br>
+                <span onclick="sortTable('daemonsettable', 1, 'asc')" style="cursor: pointer;">&#x25B2;</span>
+                <span onclick="sortTable('daemonsettable', 1, 'desc')" style="cursor: pointer;">&#x25BC;</span>
+                <input type="text" onkeyup="filterTable('daemonsettable')" placeholder="Search.."> 
+            </th>
+            <th>Desired
+                <br>
+                <span onclick="sortTable('daemonsettable', 2, 'asc')" style="cursor: pointer;">&#x25B2;</span>
+                <span onclick="sortTable('daemonsettable', 2, 'desc')" style="cursor: pointer;">&#x25BC;</span>
+                <input type="text" onkeyup="filterTable('daemonsettable')" placeholder="Search.."> 
+            </th>
+            <th>Current
+                <br>
+                <span onclick="sortTable('daemonsettable', 3, 'asc')" style="cursor: pointer;">&#x25B2;</span>
+                <span onclick="sortTable('daemonsettable', 3, 'desc')" style="cursor: pointer;">&#x25BC;</span>
+                <input type="text" onkeyup="filterTable('daemonsettable')" placeholder="Search.."> 
+            </th>
+            <th>Ready
+                <br>
+                <span onclick="sortTable('daemonsettable', 4, 'asc')" style="cursor: pointer;">&#x25B2;</span>
+                <span onclick="sortTable('daemonsettable', 4, 'desc')" style="cursor: pointer;">&#x25BC;</span>
+                <input type="text" onkeyup="filterTable('daemonsettable')" placeholder="Search.."> 
+            </th>
+            <th>Up To Date
+                <br>
+                <span onclick="sortTable('daemonsettable', 5, 'asc')" style="cursor: pointer;">&#x25B2;</span>
+                <span onclick="sortTable('daemonsettable', 5, 'desc')" style="cursor: pointer;">&#x25BC;</span>
+                <input type="text" onkeyup="filterTable('daemonsettable')" placeholder="Search.."> 
+            </th>
+            <th>Available
+                <br>
+                <span onclick="sortTable('daemonsettable', 6, 'asc')" style="cursor: pointer;">&#x25B2;</span>
+                <span onclick="sortTable('daemonsettable', 6, 'desc')" style="cursor: pointer;">&#x25BC;</span>
+                <input type="text" onkeyup="filterTable('daemonsettable')" placeholder="Search.."> 
+            </th>
+            <th>Node Selector
+                <br>
+                <span onclick="sortTable('daemonsettable', 7, 'asc')" style="cursor: pointer;">&#x25B2;</span>
+                <span onclick="sortTable('daemonsettable', 7, 'desc')" style="cursor: pointer;">&#x25BC;</span>
+                <input type="text" onkeyup="filterTable('daemonsettable')" placeholder="Search.."> 
+            </th>
+            <th>Age</th>
+        </tr>
+    </thead>
+    <tbody>
+                        <tr            
+                            style="background-color: white;"
+            >
+            <td>app02</td>
+            <td>app02-operator-app02-log</td>
+            <td>7</td>
+            <td>7</td>
+            <td>7</td>
+            <td>7</td>
+            <td>7</td>
+            <td><none></td>
+            <td>173d</td>
+        </tr>
+                        <tr            
+                            style="background-color: #f0f0f0;"
+            >
+            <td>openshift-cluster-csi-drivers</td>
+            <td>vmware-vsphere-csi-driver-node</td>
+            <td>10</td>
+            <td>10</td>
+            <td>10</td>
+            <td>10</td>
+            <td>10</td>
+            <td>kubernetes.io/os=linux</td>
+            <td>10d</td>
+        </tr>
+                        <tr            
+                            style="background-color: white;"
+            >
+            <td>openshift-cluster-node-tuning-operator</td>
+            <td>tuned</td>
+            <td>10</td>
+            <td>10</td>
+            <td>10</td>
+            <td>10</td>
+            <td>10</td>
+            <td>kubernetes.io/os=linux</td>
+            <td>10d</td>
+        </tr>
+                        <tr            
+                            style="background-color: #f0f0f0;"
+            >
+            <td>openshift-dns</td>
+            <td>dns-default</td>
+            <td>10</td>
+            <td>10</td>
+            <td>10</td>
+            <td>10</td>
+            <td>10</td>
+            <td>kubernetes.io/os=linux</td>
+            <td>10d</td>
+        </tr>
+                        <tr            
+                            style="background-color: white;"
+            >
+            <td>openshift-dns</td>
+            <td>node-resolver</td>
+            <td>10</td>
+            <td>10</td>
+            <td>10</td>
+            <td>10</td>
+            <td>10</td>
+            <td>kubernetes.io/os=linux</td>
+            <td>10d</td>
+        </tr>
+                        <tr            
+                            style="background-color: #f0f0f0;"
+            >
+            <td>openshift-image-registry</td>
+            <td>node-ca</td>
+            <td>10</td>
+            <td>10</td>
+            <td>10</td>
+            <td>10</td>
+            <td>10</td>
+            <td>kubernetes.io/os=linux</td>
+            <td>10d</td>
+        </tr>
+                        <tr            
+                            style="background-color: white;"
+            >
+            <td>openshift-ingress-canary</td>
+            <td>ingress-canary</td>
+            <td>7</td>
+            <td>7</td>
+            <td>7</td>
+            <td>7</td>
+            <td>7</td>
+            <td>kubernetes.io/os=linux</td>
+            <td>10d</td>
+        </tr>
+                        <tr            
+                            style="background-color: #f0f0f0;"
+            >
+            <td>openshift-machine-config-operator</td>
+            <td>machine-config-daemon</td>
+            <td>10</td>
+            <td>10</td>
+            <td>10</td>
+            <td>10</td>
+            <td>10</td>
+            <td>kubernetes.io/os=linux</td>
+            <td>10d</td>
+        </tr>
+                        <tr            
+                            style="background-color: white;"
+            >
+            <td>openshift-machine-config-operator</td>
+            <td>machine-config-server</td>
+            <td>3</td>
+            <td>3</td>
+            <td>3</td>
+            <td>3</td>
+            <td>3</td>
+            <td>node-role.kubernet...</td>
+            <td>10d</td>
+        </tr>
+                        <tr            
+                            style="background-color: #f0f0f0;"
+            >
+            <td>openshift-monitoring</td>
+            <td>node-exporter</td>
+            <td>10</td>
+            <td>10</td>
+            <td>10</td>
+            <td>10</td>
+            <td>10</td>
+            <td>kubernetes.io/os=linux</td>
+            <td>10d</td>
+        </tr>
+                        <tr            
+                            style="background-color: white;"
+            >
+            <td>openshift-multus</td>
+            <td>multus</td>
+            <td>10</td>
+            <td>10</td>
+            <td>10</td>
+            <td>10</td>
+            <td>10</td>
+            <td>kubernetes.io/os=linux</td>
+            <td>10d</td>
+        </tr>
+                        <tr            
+                            style="background-color: #f0f0f0;"
+            >
+            <td>openshift-multus</td>
+            <td>multus-additional-cni-plugins</td>
+            <td>10</td>
+            <td>10</td>
+            <td>10</td>
+            <td>10</td>
+            <td>10</td>
+            <td>kubernetes.io/os=linux</td>
+            <td>10d</td>
+        </tr>
+                        <tr            
+                            style="background-color: white;"
+            >
+            <td>openshift-multus</td>
+            <td>network-metrics-daemon</td>
+            <td>10</td>
+            <td>10</td>
+            <td>10</td>
+            <td>10</td>
+            <td>10</td>
+            <td>kubernetes.io/os=linux</td>
+            <td>10d</td>
+        </tr>
+                        <tr            
+                            style="background-color: #f0f0f0;"
+            >
+            <td>openshift-network-diagnostics</td>
+            <td>network-check-target</td>
+            <td>10</td>
+            <td>10</td>
+            <td>10</td>
+            <td>10</td>
+            <td>10</td>
+            <td>beta.kubernetes.io...</td>
+            <td>10d</td>
+        </tr>
+                        <tr            
+                            style="background-color: white;"
+            >
+            <td>openshift-network-node-identity</td>
+            <td>network-node-identity</td>
+            <td>3</td>
+            <td>3</td>
+            <td>3</td>
+            <td>3</td>
+            <td>3</td>
+            <td>beta.kubernetes.io...</td>
+            <td>49d</td>
+        </tr>
+                        <tr            
+                            style="background-color: #f0f0f0;"
+            >
+            <td>openshift-sdn</td>
+            <td>sdn</td>
+            <td>10</td>
+            <td>10</td>
+            <td>10</td>
+            <td>10</td>
+            <td>10</td>
+            <td>kubernetes.io/os=linux</td>
+            <td>10d</td>
+        </tr>
+                        <tr            
+                            style="background-color: white;"
+            >
+            <td>openshift-sdn</td>
+            <td>sdn-controller</td>
+            <td>3</td>
+            <td>3</td>
+            <td>3</td>
+            <td>3</td>
+            <td>3</td>
+            <td>node-role.kubernet...</td>
+            <td>10d</td>
+        </tr>
+            </tbody>
+</table></div>
+
+<div id="operator" class="tab-content">
+    <h2>Cluster Operator Status</h2>
+<table border="1"> 
+    <thead>
+        <tr>
+            <th>Name</th>
+            <th>Version</th>
+            <th>Available</th>
+            <th>Progressing</th>
+            <th>Degraded</th>
+            <th>Since</th>
+            <th>Message</th>
+        </tr>
+    </thead>
+    <tbody>
+                        <tr 
+                            style="background-color: white;"
+            >
+            <td><strong>authentication</strong></td>
+                        <td>4.14.28</td>
+            <td>True</td>
+            <td>False</td>
+            <td>False</td>
+            <td>14h</td>
+            <td></td>
+                    </tr>
+                        <tr 
+                            style="background-color: #f0f0f0;"
+            >
+            <td><strong>baremetal</strong></td>
+                        <td>4.14.28</td>
+            <td>True</td>
+            <td>False</td>
+            <td>False</td>
+            <td>10d</td>
+            <td></td>
+                    </tr>
+                        <tr 
+                            style="background-color: white;"
+            >
+            <td><strong>cloud-controller-manager</strong></td>
+                        <td>4.14.28</td>
+            <td>True</td>
+            <td>False</td>
+            <td>False</td>
+            <td>10d</td>
+            <td></td>
+                    </tr>
+                        <tr 
+                            style="background-color: #f0f0f0;"
+            >
+            <td><strong>cloud-credential</strong></td>
+                        <td>4.14.28</td>
+            <td>True</td>
+            <td>False</td>
+            <td>False</td>
+            <td>10d</td>
+            <td></td>
+                    </tr>
+                        <tr 
+                            style="background-color: white;"
+            >
+            <td><strong>cluster-autoscaler</strong></td>
+                        <td>4.14.28</td>
+            <td>True</td>
+            <td>False</td>
+            <td>False</td>
+            <td>10d</td>
+            <td></td>
+                    </tr>
+                        <tr 
+                            style="background-color: #f0f0f0;"
+            >
+            <td><strong>config-operator</strong></td>
+                        <td>4.14.28</td>
+            <td>True</td>
+            <td>False</td>
+            <td>False</td>
+            <td>10d</td>
+            <td></td>
+                    </tr>
+                        <tr 
+                            style="background-color: white;"
+            >
+            <td><strong>console</strong></td>
+                        <td>4.14.28</td>
+            <td>True</td>
+            <td>False</td>
+            <td>False</td>
+            <td>2d</td>
+            <td></td>
+                    </tr>
+                        <tr 
+                            style="background-color: #f0f0f0;"
+            >
+            <td><strong>control-plane-machine-set</strong></td>
+                        <td>4.14.28</td>
+            <td>True</td>
+            <td>False</td>
+            <td>False</td>
+            <td>173d</td>
+            <td></td>
+                    </tr>
+                        <tr 
+                            style="background-color: white;"
+            >
+            <td><strong>csi-snapshot-controller</strong></td>
+                        <td>4.14.28</td>
+            <td>True</td>
+            <td>False</td>
+            <td>False</td>
+            <td>10d</td>
+            <td></td>
+                    </tr>
+                        <tr 
+                            style="background-color: #f0f0f0;"
+            >
+            <td><strong>dns</strong></td>
+                        <td>4.14.28</td>
+            <td>True</td>
+            <td>False</td>
+            <td>False</td>
+            <td>40d</td>
+            <td></td>
+                    </tr>
+                        <tr 
+                            style="background-color: white;"
+            >
+            <td><strong>etcd</strong></td>
+                        <td>4.14.28</td>
+            <td>True</td>
+            <td>False</td>
+            <td>False</td>
+            <td>10d</td>
+            <td></td>
+                    </tr>
+                        <tr 
+                            style="background-color: #f0f0f0;"
+            >
+            <td><strong>image-registry</strong></td>
+                        <td>4.14.28</td>
+            <td>True</td>
+            <td>False</td>
+            <td>False</td>
+            <td>10d</td>
+            <td></td>
+                    </tr>
+                        <tr 
+                            style="background-color: white;"
+            >
+            <td><strong>ingress</strong></td>
+                        <td>4.14.28</td>
+            <td>True</td>
+            <td>False</td>
+            <td>False</td>
+            <td>62d</td>
+            <td></td>
+                    </tr>
+                        <tr 
+                            style="background-color: #f0f0f0;"
+            >
+            <td><strong>insights</strong></td>
+                        <td>4.14.28</td>
+            <td>True</td>
+            <td>False</td>
+            <td>False</td>
+            <td>10d</td>
+            <td></td>
+                    </tr>
+                        <tr 
+                            style="background-color: white;"
+            >
+            <td><strong>kube-apiserver</strong></td>
+                        <td>4.14.28</td>
+            <td>True</td>
+            <td>False</td>
+            <td>False</td>
+            <td>10d</td>
+            <td></td>
+                    </tr>
+                        <tr 
+                            style="background-color: #f0f0f0;"
+            >
+            <td><strong>kube-controller-manager</strong></td>
+                        <td>4.14.28</td>
+            <td>True</td>
+            <td>False</td>
+            <td>False</td>
+            <td>10d</td>
+            <td></td>
+                    </tr>
+                        <tr 
+                            style="background-color: white;"
+            >
+            <td><strong>kube-scheduler</strong></td>
+                        <td>4.14.28</td>
+            <td>True</td>
+            <td>False</td>
+            <td>False</td>
+            <td>10d</td>
+            <td></td>
+                    </tr>
+                        <tr 
+                            style="background-color: #f0f0f0;"
+            >
+            <td><strong>kube-storage-version-migrator</strong></td>
+                        <td>4.14.28</td>
+            <td>True</td>
+            <td>False</td>
+            <td>False</td>
+            <td>49d</td>
+            <td></td>
+                    </tr>
+                        <tr 
+                            style="background-color: white;"
+            >
+            <td><strong>machine-api</strong></td>
+                        <td>4.14.28</td>
+            <td>True</td>
+            <td>False</td>
+            <td>False</td>
+            <td>10d</td>
+            <td></td>
+                    </tr>
+                        <tr 
+                            style="background-color: #f0f0f0;"
+            >
+            <td><strong>machine-approver</strong></td>
+                        <td>4.14.28</td>
+            <td>True</td>
+            <td>False</td>
+            <td>False</td>
+            <td>10d</td>
+            <td></td>
+                    </tr>
+                        <tr 
+                            style="background-color: white;"
+            >
+            <td><strong>machine-config</strong></td>
+                        <td>4.14.28</td>
+            <td>True</td>
+            <td>False</td>
+            <td>False</td>
+            <td>26d</td>
+            <td></td>
+                    </tr>
+                        <tr 
+                            style="background-color: #f0f0f0;"
+            >
+            <td><strong>marketplace</strong></td>
+                        <td>4.14.28</td>
+            <td>True</td>
+            <td>False</td>
+            <td>False</td>
+            <td>10d</td>
+            <td></td>
+                    </tr>
+                        <tr 
+                            style="background-color: white;"
+            >
+            <td><strong>monitoring</strong></td>
+                        <td>4.14.28</td>
+            <td>True</td>
+            <td>False</td>
+            <td>False</td>
+            <td>12d</td>
+            <td></td>
+                    </tr>
+                        <tr 
+                            style="background-color: #f0f0f0;"
+            >
+            <td><strong>network</strong></td>
+                        <td>4.14.28</td>
+            <td>True</td>
+            <td>False</td>
+            <td>False</td>
+            <td>10d</td>
+            <td></td>
+                    </tr>
+                        <tr 
+                            style="background-color: white;"
+            >
+            <td><strong>node-tuning</strong></td>
+                        <td>4.14.28</td>
+            <td>True</td>
+            <td>False</td>
+            <td>False</td>
+            <td>49d</td>
+            <td></td>
+                    </tr>
+                        <tr 
+                            style="background-color: #f0f0f0;"
+            >
+            <td><strong>openshift-apiserver</strong></td>
+                        <td>4.14.28</td>
+            <td>True</td>
+            <td>False</td>
+            <td>False</td>
+            <td>2d</td>
+            <td></td>
+                    </tr>
+                        <tr 
+                            style="background-color: white;"
+            >
+            <td><strong>openshift-controller-manager</strong></td>
+                        <td>4.14.28</td>
+            <td>True</td>
+            <td>False</td>
+            <td>False</td>
+            <td>173d</td>
+            <td></td>
+                    </tr>
+                        <tr 
+                            style="background-color: #f0f0f0;"
+            >
+            <td><strong>openshift-samples</strong></td>
+                        <td>4.14.28</td>
+            <td>True</td>
+            <td>False</td>
+            <td>False</td>
+            <td>49d</td>
+            <td></td>
+                    </tr>
+                        <tr 
+                            style="background-color: white;"
+            >
+            <td><strong>operator-lifecycle-manager</strong></td>
+                        <td>4.14.28</td>
+            <td>True</td>
+            <td>False</td>
+            <td>False</td>
+            <td>10d</td>
+            <td></td>
+                    </tr>
+                        <tr 
+                            style="background-color: #f0f0f0;"
+            >
+            <td><strong>operator-lifecycle-manager-catalog</strong></td>
+                        <td>4.14.28</td>
+            <td>True</td>
+            <td>False</td>
+            <td>False</td>
+            <td>10d</td>
+            <td></td>
+                    </tr>
+                        <tr 
+                            style="background-color: white;"
+            >
+            <td><strong>operator-lifecycle-manager-packageserver</strong></td>
+                        <td>4.14.28</td>
+            <td>True</td>
+            <td>False</td>
+            <td>False</td>
+            <td>230d</td>
+            <td></td>
+                    </tr>
+                        <tr 
+                            style="background-color: #f0f0f0;"
+            >
+            <td><strong>service-ca</strong></td>
+                        <td>4.14.28</td>
+            <td>True</td>
+            <td>False</td>
+            <td>False</td>
+            <td>10d</td>
+            <td></td>
+                    </tr>
+                        <tr 
+                            style="background-color: white;"
+            >
+            <td><strong>storage</strong></td>
+                        <td>4.14.28</td>
+            <td>True</td>
+            <td>False</td>
+            <td>False</td>
+            <td>14d</td>
+            <td></td>
+                    </tr>
+            </tbody>
+</table></div>
+
+<div id="upgrade" class="tab-content">
+    <h2> Cluster Version and Update Information </h2>
+    
+<h2>System Upgrade Status</h2>
+<table border="1">
+    <thead>
+        <tr>
+            <th>Name</th>
+            <th>Version</th>
+            <th>Available</th>
+            <th>Progressing</th>
+            <th>Since</th>
+            <th>Status</th>
+        </tr>
+    </thead>
+    <tbody>
+                        <tr>
+            <td>version</td>
+            <td>4.14.28</td>
+            <td>
+                                    <span class="green-box">True</span>
+                            </td>
+            <td>
+                                    <span class="green-box">True</span>
+                            </td>
+            <td>49d</td>
+            <td style="background-color: red; color: white;">Cluster version is 4.14.28</td>
+        </tr>
+            </tbody>
+</table>
+
+
+<br>
+
+<h2>Update History</h2>
+
+<table border="1">
+    <thead>
+        <tr>
+            <th colspan="2" style="padding: 10px;text-align: center">Cluster Update 1</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td style="padding: 10px; text-align: left;"><strong>Upgraded Version</strong></td>
+            <td style="padding: 10px; text-align: left;">4.14.28</td>
+        </tr>
+        <tr>
+            <td style="padding: 10px; text-align: left;"><strong>Status</strong></td>
+            <td style="padding: 10px; text-align: left;">Completed</td>
+        </tr>
+        <tr>
+            <td style="padding: 10px; text-align: left;"><strong>Started Time (UTC)</strong></td>
+            <td style="padding: 10px; text-align: left;">2024-09-23T21:54:52Z</td>
+        </tr>
+        <tr>
+            <td style="padding: 10px; text-align: left;"><strong>Completion Time (UTC)</strong></td>
+            <td style="padding: 10px; text-align: left;">2024-09-23T23:15:30Z</td>
+        </tr>
+        <tr>
+            <td style="padding: 10px; text-align: left;"><strong>Image</strong></td>
+            <td style="padding: 10px; text-align: left;">quay.io/openshift-release-dev/ocp-release@sha256:c5bcd0298deee99caaf3ec88de246f3af84f80225202df46527b6f2b4d0eb3c3</td>
+        </tr>
+        <tr>
+            <td style="padding: 10px; text-align: left;"><strong>Verified</strong></td>
+            <td style="padding: 10px; text-align: left;">Yes</td>
+        </tr>
+    </tbody>
+</table>
+<table border="1">
+    <thead>
+        <tr>
+            <th colspan="2" style="padding: 10px;text-align: center">Cluster Update 2</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td style="padding: 10px; text-align: left;"><strong>Upgraded Version</strong></td>
+            <td style="padding: 10px; text-align: left;">4.13.43</td>
+        </tr>
+        <tr>
+            <td style="padding: 10px; text-align: left;"><strong>Status</strong></td>
+            <td style="padding: 10px; text-align: left;">Completed</td>
+        </tr>
+        <tr>
+            <td style="padding: 10px; text-align: left;"><strong>Started Time (UTC)</strong></td>
+            <td style="padding: 10px; text-align: left;">2024-09-23T20:11:03Z</td>
+        </tr>
+        <tr>
+            <td style="padding: 10px; text-align: left;"><strong>Completion Time (UTC)</strong></td>
+            <td style="padding: 10px; text-align: left;">2024-09-23T21:37:55Z</td>
+        </tr>
+        <tr>
+            <td style="padding: 10px; text-align: left;"><strong>Image</strong></td>
+            <td style="padding: 10px; text-align: left;">quay.io/openshift-release-dev/ocp-release@sha256:d0da3d9b016e6d693a61c9425598921b6d0da99c52cb0f3404f6dbc126149e5d</td>
+        </tr>
+        <tr>
+            <td style="padding: 10px; text-align: left;"><strong>Verified</strong></td>
+            <td style="padding: 10px; text-align: left;">Yes</td>
+        </tr>
+    </tbody>
+</table>
+<br>
+
+<table border="1">
+    <thead>
+        <tr>
+            <th>Upgrade Check Status</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+          <td style="white-space: pre-wrap; text-align: left;">Cluster version is 4.14.28
+
+Upstream is unset, so the cluster will use an appropriate default.
+Channel: stable-4.14 (available channels: candidate-4.14, candidate-4.15, eus-4.14, eus-4.16, fast-4.14, fast-4.15, stable-4.14, stable-4.15)
+
+Recommended updates:
+
+  VERSION     IMAGE
+  4.14.39     quay.io/openshift-release-dev/ocp-release@sha256:da153230f1e6745e4f06759698bd993f61d90dcea3b9cd2eb5f6905f0603741d
+  4.14.38     quay.io/openshift-release-dev/ocp-release@sha256:98e43d1e848f0ad303ed4d8d427e92f7aaeaf2f670a3bfcdbeeeaa591b63fefd
+  4.14.37     quay.io/openshift-release-dev/ocp-release@sha256:14e6ba3975e6c73b659fa55af25084b20ab38a543772ca70e184b903db73092b
+  4.14.36     quay.io/openshift-release-dev/ocp-release@sha256:4bc4925e8028158e3f313aa83e59e181c94d88b4aa82a3b00202d6f354e8dfed
+  4.14.35     quay.io/openshift-release-dev/ocp-release@sha256:883088e3e6efa7443b0ac28cd7682c2fdbda889b576edad626769bf956ac0858
+  4.14.34     quay.io/openshift-release-dev/ocp-release@sha256:d703e6615b85a6f94fb3f3e490f2eb4514412bc018ecfe967f57f4221116a718
+  4.14.33     quay.io/openshift-release-dev/ocp-release@sha256:40ba8c540d16a97a6b629232a5a16da64fca655c4b83b734aa28415b5c708acf
+  4.14.32     quay.io/openshift-release-dev/ocp-release@sha256:912d7c15e1d82ffc4aa1fc34d2b64c4c7b6670ecd11314c14ca2d6ffdcea22a3
+  4.14.31     quay.io/openshift-release-dev/ocp-release@sha256:e4424eeec8a386241a5348d556bdd6dd82ea68f4f19f30f71d18963fb5924e9e
+  4.14.30     quay.io/openshift-release-dev/ocp-release@sha256:2bda857a6a92b9a6cd353e707029218a78ba1b4a60a762d849a2bc0eb4234e25
+  4.14.29     quay.io/openshift-release-dev/ocp-release@sha256:797ef883017750606771c408de0d3f84ec0f09a1022fb9fb33199c75c54284ed</td>
+        </tr>
+    </tbody>
+</table>
+
+<br></div>
+
+
+<div id="nodehealth" class="tab-content">
+      <h2>ETCD Pods Status</h2>
+      <table border="1">
+    <thead>
+        <tr>
+            <th>Pod Name</th>
+            <th>Ready</th>
+            <th>Status</th>
+            <th>Restarts</th>
+            <th>Age</th>
+        </tr>
+    </thead>
+    <tbody>
+                  
+        <tr 
+                            style="background-color: white;"
+            >
+            <td><strong>etcd-trdev-sjfhz-master-0</strong></td>
+            <td>4/4</td>
+            <td>Running</td>
+            <td>0</td>
+            <td>49d</td>
+        </tr>
+                  
+        <tr 
+                            style="background-color: #f0f0f0;"
+            >
+            <td><strong>etcd-trdev-sjfhz-master-1</strong></td>
+            <td>4/4</td>
+            <td>Running</td>
+            <td>0</td>
+            <td>49d</td>
+        </tr>
+                  
+        <tr 
+                            style="background-color: white;"
+            >
+            <td><strong>etcd-trdev-sjfhz-master-2</strong></td>
+            <td>4/4</td>
+            <td>Running</td>
+            <td>0</td>
+            <td>49d</td>
+        </tr>
+            </tbody>
+</table> 
+      <h2>Node Services</h2>
+      <table border="1">
+    <thead>
+        <tr>
+            <th>Node</th>
+            <th>Last Heartbeat Time</th>
+            <th>Memory Pressure</th>
+            <th>Disk Pressure</th>
+            <th>PID Pressure</th>
+            <th>Kubelet Service</th>
+        </tr>
+    </thead>
+    <tbody>
+                        <tr            
+                            style="background-color: white;"
+            >
+            <td><strong>trdev-sjfhz-master-0</strong></td>
+            <td>2024-11-12T09:24:42Z</td>
+            <td style="background-color: #C8F0C1;">KubeletHasSufficientMemory</td>
+            <td style="background-color: #C8F0C1;">KubeletHasNoDiskPressure</td>
+            <td style="background-color: #C8F0C1;">KubeletHasSufficientPID</td>
+            <td style="background-color: #C8F0C1;">KubeletReady</td>
+        </tr>
+                        <tr            
+                            style="background-color: #f0f0f0;"
+            >
+            <td><strong>trdev-sjfhz-master-1</strong></td>
+            <td>2024-11-12T09:20:59Z</td>
+            <td style="background-color: #C8F0C1;">KubeletHasSufficientMemory</td>
+            <td style="background-color: #C8F0C1;">KubeletHasNoDiskPressure</td>
+            <td style="background-color: #C8F0C1;">KubeletHasSufficientPID</td>
+            <td style="background-color: #C8F0C1;">KubeletReady</td>
+        </tr>
+                        <tr            
+                            style="background-color: white;"
+            >
+            <td><strong>trdev-sjfhz-master-2</strong></td>
+            <td>2024-11-12T09:21:20Z</td>
+            <td style="background-color: #C8F0C1;">KubeletHasSufficientMemory</td>
+            <td style="background-color: #C8F0C1;">KubeletHasNoDiskPressure</td>
+            <td style="background-color: #C8F0C1;">KubeletHasSufficientPID</td>
+            <td style="background-color: #C8F0C1;">KubeletReady</td>
+        </tr>
+                        <tr            
+                            style="background-color: #f0f0f0;"
+            >
+            <td><strong>trdev-sjfhz-worker-2hqsv</strong></td>
+            <td>2024-11-12T09:21:59Z</td>
+            <td style="background-color: #C8F0C1;">KubeletHasSufficientMemory</td>
+            <td style="background-color: #C8F0C1;">KubeletHasNoDiskPressure</td>
+            <td style="background-color: #C8F0C1;">KubeletHasSufficientPID</td>
+            <td style="background-color: #C8F0C1;">KubeletReady</td>
+        </tr>
+                        <tr            
+                            style="background-color: white;"
+            >
+            <td><strong>trdev-sjfhz-worker-fdvl6</strong></td>
+            <td>2024-11-12T09:23:50Z</td>
+            <td style="background-color: #C8F0C1;">KubeletHasSufficientMemory</td>
+            <td style="background-color: #C8F0C1;">KubeletHasNoDiskPressure</td>
+            <td style="background-color: #C8F0C1;">KubeletHasSufficientPID</td>
+            <td style="background-color: #C8F0C1;">KubeletReady</td>
+        </tr>
+                        <tr            
+                            style="background-color: #f0f0f0;"
+            >
+            <td><strong>trdev-sjfhz-worker-fr8w6</strong></td>
+            <td>2024-11-12T09:22:19Z</td>
+            <td style="background-color: #C8F0C1;">KubeletHasSufficientMemory</td>
+            <td style="background-color: #C8F0C1;">KubeletHasNoDiskPressure</td>
+            <td style="background-color: #C8F0C1;">KubeletHasSufficientPID</td>
+            <td style="background-color: #C8F0C1;">KubeletReady</td>
+        </tr>
+                        <tr            
+                            style="background-color: white;"
+            >
+            <td><strong>trdev-sjfhz-worker-k88j6</strong></td>
+            <td>2024-11-12T09:23:32Z</td>
+            <td style="background-color: #C8F0C1;">KubeletHasSufficientMemory</td>
+            <td style="background-color: #C8F0C1;">KubeletHasNoDiskPressure</td>
+            <td style="background-color: #C8F0C1;">KubeletHasSufficientPID</td>
+            <td style="background-color: #C8F0C1;">KubeletReady</td>
+        </tr>
+                        <tr            
+                            style="background-color: #f0f0f0;"
+            >
+            <td><strong>trdev-sjfhz-worker-kn4xp</strong></td>
+            <td>2024-11-12T09:24:45Z</td>
+            <td style="background-color: #C8F0C1;">KubeletHasSufficientMemory</td>
+            <td style="background-color: #C8F0C1;">KubeletHasNoDiskPressure</td>
+            <td style="background-color: #C8F0C1;">KubeletHasSufficientPID</td>
+            <td style="background-color: #C8F0C1;">KubeletReady</td>
+        </tr>
+                        <tr            
+                            style="background-color: white;"
+            >
+            <td><strong>trdev-sjfhz-worker-wlxp6</strong></td>
+            <td>2024-11-12T09:24:10Z</td>
+            <td style="background-color: #C8F0C1;">KubeletHasSufficientMemory</td>
+            <td style="background-color: #C8F0C1;">KubeletHasNoDiskPressure</td>
+            <td style="background-color: #C8F0C1;">KubeletHasSufficientPID</td>
+            <td style="background-color: #C8F0C1;">KubeletReady</td>
+        </tr>
+                        <tr            
+                            style="background-color: #f0f0f0;"
+            >
+            <td><strong>trdev-sjfhz-worker-xh9sg</strong></td>
+            <td>2024-11-12T09:23:46Z</td>
+            <td style="background-color: #C8F0C1;">KubeletHasSufficientMemory</td>
+            <td style="background-color: #C8F0C1;">KubeletHasNoDiskPressure</td>
+            <td style="background-color: #C8F0C1;">KubeletHasSufficientPID</td>
+            <td style="background-color: #C8F0C1;">KubeletReady</td>
+        </tr>
+            </tbody>
+</table></div>
+
+<div id="deployments" class="tab-content">
+    <h2>Deployments</h2>
+    <table border="1" id="deploymentstable">
+
+    <thead>
+        <tr>
+            <th>Namespace
+            <br>
+                <span onclick="sortTable('deploymentstable', 0, 'asc')" style="cursor: pointer;">&#x25B2;</span>
+                <span onclick="sortTable('deploymentstable', 0, 'desc')" style="cursor: pointer;">&#x25BC;</span>
+                <input type="text" onkeyup="filterTable('deploymentstable')" placeholder="Search ..">
+            </th>
+            <th>Name
+            <br>
+                <span onclick="sortTable('deploymentstable', 1, 'asc')" style="cursor: pointer;">&#x25B2;</span>
+                <span onclick="sortTable('deploymentstable', 1, 'desc')" style="cursor: pointer;">&#x25BC;</span>
+                <input type="text" onkeyup="filterTable('deploymentstable')" placeholder="Search ..">
+            </th>
+            <th>Replicas
+            <br>
+                <span onclick="sortTable('deploymentstable', 2, 'asc')" style="cursor: pointer;">&#x25B2;</span>
+                <span onclick="sortTable('deploymentstable', 2, 'desc')" style="cursor: pointer;">&#x25BC;</span>
+            </th>
+            <th>Up To Date
+            <br>
+                <span onclick="sortTable('deploymentstable', 3, 'asc')" style="cursor: pointer;">&#x25B2;</span>
+                <span onclick="sortTable('deploymentstable', 3, 'desc')" style="cursor: pointer;">&#x25BC;</span>
+            </th>
+            <th>Available
+            <br>
+                <span onclick="sortTable('deploymentstable', 4, 'asc')" style="cursor: pointer;">&#x25B2;</span>
+                <span onclick="sortTable('deploymentstable', 4, 'desc')" style="cursor: pointer;">&#x25BC;</span>
+            </th>
+            <th>Age
+            <br>
+                <span onclick="sortTable('deploymentstable', 5, 'asc')" style="cursor: pointer;">&#x25B2;</span>
+                <span onclick="sortTable('deploymentstable', 5, 'desc')" style="cursor: pointer;">&#x25BC;</span>
+            </th>
+            <th>Images
+            <br>
+                <span onclick="sortTable('deploymentstable', 6, 'asc')" style="cursor: pointer;">&#x25B2;</span>
+                <span onclick="sortTable('deploymentstable', 6, 'desc')" style="cursor: pointer;">&#x25BC;</span>
+            </th>
+            <th>Version
+            <br>
+                <span onclick="sortTable('deploymentstable', 7, 'asc')" style="cursor: pointer;">&#x25B2;</span>
+                <span onclick="sortTable('deploymentstable', 7, 'desc')" style="cursor: pointer;">&#x25BC;</span>
+            </th>
+            <th>Cpu Request
+            <br>
+                <span onclick="sortTable('deploymentstable', 8, 'asc')" style="cursor: pointer;">&#x25B2;</span>
+                <span onclick="sortTable('deploymentstable', 8, 'desc')" style="cursor: pointer;">&#x25BC;</span>
+            </th>
+            <th>Cpu Limit
+            <br>
+                <span onclick="sortTable('deploymentstable', 9, 'asc')" style="cursor: pointer;">&#x25B2;</span>
+                <span onclick="sortTable('deploymentstable', 9, 'desc')" style="cursor: pointer;">&#x25BC;</span>
+            </th>
+            <th>Memory Request
+            <br>
+                <span onclick="sortTable('deploymentstable', 10, 'asc')" style="cursor: pointer;">&#x25B2;</span>
+                <span onclick="sortTable('deploymentstable', 10, 'desc')" style="cursor: pointer;">&#x25BC;</span>
+            </th>
+            <th>Memory Limit
+            <br>
+                <span onclick="sortTable('deploymentstable', 11, 'asc')" style="cursor: pointer;">&#x25B2;</span>
+                <span onclick="sortTable('deploymentstable', 11, 'desc')" style="cursor: pointer;">&#x25BC;</span>
+            </th>
+        </tr>
+    </thead>
+    <tbody>
+                        <tr            
+                            style="background-color: white;"
+            >
+            <td style="white-space: nowrap" ><strong>app2</strong></td>
+            <td style="white-space: nowrap" >app2</td>
+            <td  style="background-color: yellow; color: black;" >1</td>
+            <td>1</td>
+            <td>1</td>
+            <td style="white-space: nowrap" >2023-08-18T10:25:30Z</td>
+            <td style="white-space: nowrap" >demo.repo.io/public-images/app2</td>
+            <td>v1.1.1</td>
+            <td>N/A</td>
+            <td>N/A</td>
+            <td>N/A</td>
+            <td>N/A</td>
+        </tr>
+                        <tr            
+                            style="background-color: #f0f0f0;"
+            >
+            <td style="white-space: nowrap" ><strong>app02</strong></td>
+            <td style="white-space: nowrap" >app02-operator</td>
+            <td  style="background-color: yellow; color: black;" >1</td>
+            <td>1</td>
+            <td>1</td>
+            <td style="white-space: nowrap" >2024-01-15T14:19:23Z</td>
+            <td style="white-space: nowrap" >demo.repo.io/app02-operator</td>
+            <td>1.1.2</td>
+            <td>N/A</td>
+            <td>N/A</td>
+            <td>N/A</td>
+            <td>N/A</td>
+        </tr>
+                        <tr            
+                            style="background-color: white;"
+            >
+            <td style="white-space: nowrap" ><strong>app02</strong></td>
+            <td style="white-space: nowrap" >app1</td>
+            <td  style="background-color: yellow; color: black;" >1</td>
+            <td>1</td>
+            <td>1</td>
+            <td style="white-space: nowrap" >2024-02-20T11:34:32Z</td>
+            <td style="white-space: nowrap" >demo.repo.io/app1</td>
+            <td>2.9.0</td>
+            <td>100m</td>
+            <td>100m</td>
+            <td>512M</td>
+            <td>512M</td>
+        </tr>
+                        <tr            
+                            style="background-color: #f0f0f0;"
+            >
+            <td style="white-space: nowrap" ><strong>monitoring</strong></td>
+            <td style="white-space: nowrap" >monitoring</td>
+            <td  style="background-color: yellow; color: black;" >1</td>
+            <td>1</td>
+            <td>1</td>
+            <td style="white-space: nowrap" >2023-11-08T11:50:38Z</td>
+            <td style="white-space: nowrap" >demo.repo.io/public-images/grafana</td>
+            <td>1.1.1</td>
+            <td>N/A</td>
+            <td>N/A</td>
+            <td>N/A</td>
+            <td>N/A</td>
+        </tr>
+                        <tr            
+                            style="background-color: white;"
+            >
+            <td style="white-space: nowrap" ><strong>nfs-provisioner</strong></td>
+            <td style="white-space: nowrap" >nfs-provisioner-nfs-subdir-external-provisioner</td>
+            <td  style="background-color: yellow; color: black;" >1</td>
+            <td>1</td>
+            <td>1</td>
+            <td style="white-space: nowrap" >2023-08-18T10:33:05Z</td>
+            <td style="white-space: nowrap" >demo.repo.io/nfs-subdir-external-provisioner</td>
+            <td>v1.1.1</td>
+            <td>N/A</td>
+            <td>N/A</td>
+            <td>N/A</td>
+            <td>N/A</td>
+        </tr>
+                        <tr            
+                            style="background-color: #f0f0f0;"
+            >
+            <td style="white-space: nowrap" ><strong>ui</strong></td>
+            <td style="white-space: nowrap" >ui</td>
+            <td  style="background-color: yellow; color: black;" >1</td>
+            <td>1</td>
+            <td>1</td>
+            <td style="white-space: nowrap" >2023-08-22T10:08:31Z</td>
+            <td style="white-space: nowrap" >demo.repo.io/public-images/ui</td>
+            <td>v1.1.1</td>
+            <td>100m</td>
+            <td>300m</td>
+            <td>1Gi</td>
+            <td>1200Mi</td>
+        </tr>
+            </tbody>
+</table>
+
+<br></div>
+
+<div id="routecert" class="tab-content">
+    <h2>Certification Expire Date</h2>
+    
+
+
+<table border="1">
+    <thead>
+        <tr>
+            <th>Address</th>
+            <th>Certificate Start Date</th>
+            <th>Certificate Expire Date</th>
+        </Tr>
+    </thead>
+    <tbody>
+        <tr>
+           <td>console-openshift-console.apps.test.exampledomain.local</td>
+           <td>['Aug  9 11:49:18 2023 GMT']</td>
+           <td style="background-color: ; color:  black ; font-weight: ;">
+               Aug 08 11:49:19 2025 
+           </td>
+        </tr>
+    </tbody>
+</table>
+
+<br>
+
+
+
+
+<h2>Routes</h2>
+<table border="1">
+    <thead>
+        <tr>
+            <th>Namespace</th>
+            <th>Name</th>
+            <th>Host/Port</th>
+            <th>Path</th>
+            <th>Service</th>
+            <th>Port</th>
+            <th>Status </th>
+        </tr>
+    </thead>
+    <tbody>
+                        <tr            
+                            style="background-color: #f0f0f0;"
+            >
+            <td><strong>app02</strong></td>
+            <td><strong>app02</strong></td>
+            <td><strong>app02.apps.test.exampledomain.local</strong></td>
+            <td><strong>/</strong></td>
+            <td>dashboards</td>
+            <td>http</td>
+            <td>True</td>
+        </tr>
+                        <tr            
+                            style="background-color: white;"
+            >
+            <td><strong>monitoring</strong></td>
+            <td><strong>monitoring</strong></td>
+            <td><strong>monitoring.apps.test.exampledomain.local</strong></td>
+            <td><strong>/</strong></td>
+            <td>monitoring-grafana</td>
+            <td>service</td>
+            <td>True</td>
+        </tr>
+                        <tr            
+                            style="background-color: #f0f0f0;"
+            >
+            <td><strong>openshift-authentication</strong></td>
+            <td><strong>oauth-openshift</strong></td>
+            <td><strong>oauth-openshift.apps.test.exampledomain.local</strong></td>
+            <td><strong>N/A</strong></td>
+            <td>oauth-openshift</td>
+            <td>6443</td>
+            <td>True</td>
+        </tr>
+                        <tr            
+                            style="background-color: white;"
+            >
+            <td><strong>openshift-console</strong></td>
+            <td><strong>console</strong></td>
+            <td><strong>console-openshift-console.apps.test.exampledomain.local</strong></td>
+            <td><strong>N/A</strong></td>
+            <td>console</td>
+            <td>https</td>
+            <td>True</td>
+        </tr>
+                        <tr            
+                            style="background-color: #f0f0f0;"
+            >
+            <td><strong>openshift-console</strong></td>
+            <td><strong>downloads</strong></td>
+            <td><strong>downloads-openshift-console.apps.test.exampledomain.local</strong></td>
+            <td><strong>N/A</strong></td>
+            <td>downloads</td>
+            <td>http</td>
+            <td>True</td>
+        </tr>
+
+            </tbody>
+</table>
+            <td><strong>logs reduced for sample report</strong></td>
+
+</div>
+
+<div id="alerts" class="tab-content">
+    <h2>Alert Manager Notifications</h2>
+    <table border="1" id="alertstable">
+    <thead>
+        <tr>
+            <th>Alert Name
+            <br>
+                <span onclick="sortTable('alertstable', 0, 'asc')" style="cursor: pointer;">&#x25B2;</span>
+                <span onclick="sortTable('alertstable', 0, 'desc')" style="cursor: pointer;">&#x25BC;</span>
+            </th>
+            <th>Starts At
+            <br>
+                <span onclick="sortTable('alertstable', 1, 'asc')" style="cursor: pointer;">&#x25B2;</span>
+                <span onclick="sortTable('alertstable', 1, 'desc')" style="cursor: pointer;">&#x25BC;</span>
+            </th>
+            <th>Severity
+            <br>
+                <span onclick="sortTable('alertstable', 2, 'asc')" style="cursor: pointer;">&#x25B2;</span>
+                <span onclick="sortTable('alertstable', 2, 'desc')" style="cursor: pointer;">&#x25BC;</span>
+            </th>
+            <th>Summary
+                <br>
+                <span onclick="sortTable('alertstable', 3, 'asc')" style="cursor: pointer;">&#x25B2;</span>
+                <span onclick="sortTable('alertstable', 3, 'desc')" style="cursor: pointer;">&#x25BC;</span>
+            </th>
+            <th>State
+            <br>
+                <span onclick="sortTable('alertstable', 4, 'asc')" style="cursor: pointer;">&#x25B2;</span>
+                <span onclick="sortTable('alertstable', 4, 'desc')" style="cursor: pointer;">&#x25BC;</span>
+            </th>
+        </tr>
+    </thead>
+    <tbody>
+                <tr
+                            style="background-color: white;"
+            >
+            <td style="font-size: 12px; text-align: left;">KubeDeploymentReplicasMismatch</td>
+            <td style="font-size: 12px; text-align: left; white-space: normal;  max-width: 150px;">2024-10-02T04:12:46.289Z</td>
+            <td >warning</td>
+            <td style="word-wrap: break-word; white-space: normal; text-align: left;">
+                                    Deployment has not matched the expected number of replicas
+                            </td>
+            <td>active</td>
+        </tr>
+                <tr
+                            style="background-color: #f0f0f0;"
+            >
+            <td style="font-size: 12px; text-align: left;">KubePodCrashLooping</td>
+            <td style="font-size: 12px; text-align: left; white-space: normal;  max-width: 150px;">2024-10-07T20:19:41.762Z</td>
+            <td >warning</td>
+            <td style="word-wrap: break-word; white-space: normal; text-align: left;">
+                                    Pod is crash looping.
+                            </td>
+            <td>active</td>
+        </tr>
+                <tr
+                            style="background-color: white;"
+            >
+            <td style="font-size: 12px; text-align: left;">KubePodCrashLooping</td>
+            <td style="font-size: 12px; text-align: left; white-space: normal;  max-width: 150px;">2024-09-09T16:02:41.762Z</td>
+            <td >warning</td>
+            <td style="word-wrap: break-word; white-space: normal; text-align: left;">
+                                    Pod is crash looping.
+                            </td>
+            <td>active</td>
+        </tr>
+                <tr
+                            style="background-color: #f0f0f0;"
+            >
+            <td style="font-size: 12px; text-align: left;">ClusterOperatorDegraded</td>
+            <td style="font-size: 12px; text-align: left; white-space: normal;  max-width: 150px;">2024-09-09T16:19:52.943Z</td>
+            <td >warning</td>
+            <td style="word-wrap: break-word; white-space: normal; text-align: left;">
+                                    Cluster operator has been degraded for 30 minutes.
+                            </td>
+            <td>active</td>
+        </tr>
+                <tr
+                            style="background-color: white;"
+            >
+            <td style="font-size: 12px; text-align: left;">KubePodCrashLooping</td>
+            <td style="font-size: 12px; text-align: left; white-space: normal;  max-width: 150px;">2024-09-09T16:04:41.762Z</td>
+            <td >warning</td>
+            <td style="word-wrap: break-word; white-space: normal; text-align: left;">
+                                    Pod is crash looping.
+                            </td>
+            <td>active</td>
+        </tr>
+                <tr
+                            style="background-color: #f0f0f0;"
+            >
+            <td style="font-size: 12px; text-align: left;">Watchdog</td>
+            <td style="font-size: 12px; text-align: left; white-space: normal;  max-width: 150px;">2024-07-26T12:21:16.875Z</td>
+            <td >none</td>
+            <td style="word-wrap: break-word; white-space: normal; text-align: left;">
+                                    An alert that should always be firing to certify that Alertmanager is working properly.
+                            </td>
+            <td>active</td>
+        </tr>
+                <tr
+                            style="background-color: white;"
+            >
+            <td style="font-size: 12px; text-align: left;">AlertmanagerReceiversNotConfigured</td>
+            <td style="font-size: 12px; text-align: left; white-space: normal;  max-width: 150px;">2024-07-26T12:31:46.289Z</td>
+            <td >warning</td>
+            <td style="word-wrap: break-word; white-space: normal; text-align: left;">
+                                    Receivers (notification integrations) are not configured on Alertmanager
+                            </td>
+            <td>active</td>
+        </tr>
+                <tr
+                            style="background-color: #f0f0f0;"
+            >
+            <td style="font-size: 12px; text-align: left;">ClusterOperatorDown</td>
+            <td style="font-size: 12px; text-align: left; white-space: normal;  max-width: 150px;">2024-11-11T22:33:22.943Z</td>
+            <td >critical</td>
+            <td style="word-wrap: break-word; white-space: normal; text-align: left;">
+                                    Cluster operator has not been available for 10 minutes.
+                            </td>
+            <td>active</td>
+        </tr>
+                <tr
+                            style="background-color: white;"
+            >
+            <td style="font-size: 12px; text-align: left;">VSphereOpenshiftConnectionFailure</td>
+            <td style="font-size: 12px; text-align: left; white-space: normal;  max-width: 150px;">2024-09-09T16:41:38.722Z</td>
+            <td >warning</td>
+            <td style="word-wrap: break-word; white-space: normal; text-align: left;">
+                                    vsphere-problem-detector is unable to connect to vSphere vCenter.
+                            </td>
+            <td>active</td>
+        </tr>
+                <tr
+                            style="background-color: #f0f0f0;"
+            >
+            <td style="font-size: 12px; text-align: left;">KubePodCrashLooping</td>
+            <td style="font-size: 12px; text-align: left; white-space: normal;  max-width: 150px;">2024-10-07T20:21:41.762Z</td>
+            <td >warning</td>
+            <td style="word-wrap: break-word; white-space: normal; text-align: left;">
+                                    Pod is crash looping.
+                            </td>
+            <td>active</td>
+        </tr>
+                <tr
+                            style="background-color: white;"
+            >
+            <td style="font-size: 12px; text-align: left;">UpdateAvailable</td>
+            <td style="font-size: 12px; text-align: left; white-space: normal;  max-width: 150px;">2024-11-12T17:46:00.825Z</td>
+            <td >info</td>
+            <td style="word-wrap: break-word; white-space: normal; text-align: left;">
+                                    Your upstream update recommendation service recommends you update your cluster.
+                            </td>
+            <td>active</td>
+        </tr>
+                <tr
+                            style="background-color: #f0f0f0;"
+            >
+            <td style="font-size: 12px; text-align: left;">ClusterNotUpgradeable</td>
+            <td style="font-size: 12px; text-align: left; white-space: normal;  max-width: 150px;">2024-09-09T16:47:52.943Z</td>
+            <td >info</td>
+            <td style="word-wrap: break-word; white-space: normal; text-align: left;">
+                                    One or more cluster operators have been blocking minor version cluster upgrades for at least an hour.
+                            </td>
+            <td>active</td>
+        </tr>
+                <tr
+                            style="background-color: white;"
+            >
+            <td style="font-size: 12px; text-align: left;">TargetDown</td>
+            <td style="font-size: 12px; text-align: left; white-space: normal;  max-width: 150px;">2024-09-09T16:04:51.372Z</td>
+            <td >warning</td>
+            <td style="word-wrap: break-word; white-space: normal; text-align: left;">
+                                    Some targets were not reachable from the monitoring server for an extended period of time.
+                            </td>
+            <td>active</td>
+        </tr>
+                <tr
+                            style="background-color: #f0f0f0;"
+            >
+            <td style="font-size: 12px; text-align: left;">PodDisruptionBudgetLimit</td>
+            <td style="font-size: 12px; text-align: left; white-space: normal;  max-width: 150px;">2024-11-10T02:30:42.161Z</td>
+            <td >critical</td>
+            <td style="word-wrap: break-word; white-space: normal; text-align: left;">
+                                    The pod disruption budget registers insufficient amount of pods.
+                            </td>
+            <td>active</td>
+        </tr>
+            </tbody>
+</table></div>
+
+<div id="podhealth" class="tab-content">
+    <h2>POD's Health</h2>
+    <br>
+<table border="1">
+    <thead>
+        <tr>
+            <th colspan="8">List of Pod Issues: Pending, Failed, and Crash States</th>
+        </tr>
+        <tr>
+            <th>Namespace</th>
+            <th>Name            </th>
+            <th>Ready</th>
+            <th>Status</th>
+            <th>Restarts</th>
+            <th>Age</th>
+            <th>Ip</th>
+            <th>Node</th>
+        </tr>
+    </thead>
+    <tbody>
+            </tbody>
+</table>
+<br>
+
+<table border="1" id="restartpod">
+    <thead>
+        <tr>
+            <th colspan="6">List of Pods Restarted In the Last 24 Hours</th>
+        </tr>
+        <tr>
+            <th>Namespace</th>
+            <th>Pod Name</th>
+            <th>Restart Count</th>
+            <th>Status</th>
+            <th>Last Restart Time (UTC)</th>
+            <th>Node</th>
+        </tr>
+    </thead>
+    <tbody>
+                        <tr
+                            style="background-color: white;"
+            >
+            <td>app02</td>
+            <td>app02-operator-7c4b984ffb-fm7ps</td>
+            <td>53</td>
+            <td>Running</td>
+            <td>2024-11-11T18:47:00Z</td>
+            <td>trdev-sjfhz-worker-fr8w6</td>
+
+        </tr>
+                        <tr
+                            style="background-color: #f0f0f0;"
+            >
+            <td>nfs-provisioner</td>
+            <td>nfs-provisioner-nfs-subdir-external-provisioner-77c6bbc4684hbz7</td>
+            <td>51</td>
+            <td>Running</td>
+            <td>2024-11-11T18:47:01Z</td>
+            <td>trdev-sjfhz-worker-kn4xp</td>
+
+        </tr>
+                        <tr
+                            style="background-color: white;"
+            >
+            <td>openshift-operators</td>
+            <td>strimzi-cluster-operator-v1.34.0-64f944c29</td>
+            <td>53</td>
+            <td>Running</td>
+            <td>2024-11-11T18:47:04Z</td>
+            <td>trdev-sjfhz-worker-kn4xp</td>
+
+        </tr>
+            </tbody>
+</table>
+
+<br>
+
+<table border="1" id="createdpod">
+    <thead>
+        <tr>
+            <th colspan="5">List of Pods Created In the Last 24 Hours</th>
+        </tr>
+        <tr>
+            <th>NAMESPACE</th>
+            <th>POD NAME</th>
+            <th>STATUS</th>
+            <th>CREATED TIME</th>
+            <th>NODE</th>
+        </tr>
+    </thead>
+    <tbody>
+                        <tr
+                            style="background-color: white;"
+            >
+            <td>openshift-image-registry</td>
+            <td>image-pruner-28856160-p67pn</td>
+            <td>Succeeded</td>
+            <td>2024-11-12T00:00:00Z</td>
+            <td>trdev-sjfhz-worker-xh9sg</td>
+        </tr>
+                        <tr
+                            style="background-color: #f0f0f0;"
+            >
+            <td>openshift-marketplace</td>
+            <td>certified-operators-7pmtx</td>
+            <td>Running</td>
+            <td>2024-11-11T18:40:36Z</td>
+            <td>trdev-sjfhz-master-1</td>
+        </tr>
+                        <tr
+                            style="background-color: white;"
+            >
+            <td>openshift-marketplace</td>
+            <td>community-operators-jbcbh</td>
+            <td>Running</td>
+            <td>2024-11-12T04:29:46Z</td>
+            <td>trdev-sjfhz-master-1</td>
+        </tr>
+                        <tr
+                            style="background-color: #f0f0f0;"
+            >
+            <td>openshift-marketplace</td>
+            <td>redhat-operators-gphqn</td>
+            <td>Running</td>
+            <td>2024-11-11T20:15:04Z</td>
+            <td>trdev-sjfhz-master-1</td>
+        </tr>
+                        <tr
+                            style="background-color: white;"
+            >
+            <td>openshift-operator-lifecycle-manager</td>
+            <td>collect-profiles-28856685-5lz6q</td>
+            <td>Succeeded</td>
+            <td>2024-11-12T08:45:00Z</td>
+            <td>trdev-sjfhz-worker-k88j6</td>
+        </tr>
+                        <tr
+                            style="background-color: #f0f0f0;"
+            >
+            <td>openshift-operator-lifecycle-manager</td>
+            <td>collect-profiles-28856700-w8l5d</td>
+            <td>Succeeded</td>
+            <td>2024-11-12T09:00:00Z</td>
+            <td>trdev-sjfhz-worker-k88j6</td>
+        </tr>
+                        <tr
+                            style="background-color: white;"
+            >
+            <td>openshift-operator-lifecycle-manager</td>
+            <td>collect-profiles-28856715-qjn5b</td>
+            <td>Succeeded</td>
+            <td>2024-11-12T09:15:00Z</td>
+            <td>trdev-sjfhz-worker-k88j6</td>
+        </tr>
+            </tbody>
+</table>
+
+<br></div>
+
+<div id="storage" class="tab-content">
+    <h2>Storage Class</h2>
+<table border="1">
+    <thead>
+        <tr>
+            <th>Name</th>
+            <th>Provisioner</th>
+            <th>Reclaim Policy</th>
+            <th>Volume Binding Mode</th>
+            <th>Allow Volume Expansion</th>
+            <th>Age</th>
+        </tr>
+    </thead>
+    <tbody>
+                        <tr            
+                            style="background-color: white;"
+            >
+            <td><strong>nfs-client</strong></td>
+            <td>cluster.local/nfs-provisioner-nfs-subdir-external-provisioner</td>
+            <td>Retain</td>
+            <td>Immediate</td>
+            <td>true</td>
+            <td>2023-08-18T10:33:05Z</td>
+        </tr>
+                        <tr            
+                            style="background-color: #f0f0f0;"
+            >
+            <td><strong>thin</strong></td>
+            <td>kubernetes.io/vsphere-volume</td>
+            <td>Delete</td>
+            <td>Immediate</td>
+            <td>N/A</td>
+            <td>2023-08-09T11:46:49Z</td>
+        </tr>
+                        <tr            
+                            style="background-color: white;"
+            >
+            <td><strong>thin-csi</strong></td>
+            <td>csi.vsphere.vmware.com</td>
+            <td>Delete</td>
+            <td>WaitForFirstConsumer</td>
+            <td>true</td>
+            <td>2023-08-09T11:51:33Z</td>
+        </tr>
+            </tbody>
+</table>
+
+
+<h2>Persistent Volume Claim's</h2>
+<table border="1">
+    <thead>
+        <tr>
+            <th>Namespace</th>
+            <th>Name</th>
+            <th>Status</th>
+            <th>Volume</th>
+            <th>Capacity</th>
+            <th>Access Modes</th>
+            <th>Storageclass</th>
+            <th>Age</th>
+        </tr>
+    </thead>
+    <tbody>
+                        <tr            
+                            style="background-color: white;"
+            >
+            <td><strong>app01</strong></td>
+            <td>app01-pvc</td>
+            <td>Bound</td>
+            <td>app01-pv</td>
+            <td>10Gi</td>
+            <td>ReadWriteOnce</td>
+            <td>thin</td>
+            <td>2023-08-18T10:30:12Z</td>
+        </tr>
+                        <tr            
+                            style="background-color: #f0f0f0;"
+            >
+            <td><strong>app02</strong></td>
+            <td>app02-operator-app02-fluentd-buffer-app02-operator-app02-fluentd-0</td>
+            <td>Bound</td>
+            <td>pvc-4891b2bb-a756-43d9968efe87a</td>
+            <td>10Gi</td>
+            <td>ReadWriteOnce</td>
+            <td>nfs-client</td>
+            <td>2024-01-15T14:24:05Z</td>
+        </tr>
+            </tbody>
+</table>
+
+<br>
+
+<h2>Persistent Volume</h2>
+<table border="1">
+    <thead>
+        <tr>
+            <th>Name</th>
+            <th>Capacity</th>
+            <th>Access Modes</th>
+            <th>Policy</th>
+            <th>Status</th>
+            <th>Claim</th>
+            <th>Storageclass</th>
+            <th>Creatin Timestamp</th>
+        </tr>
+    </thead>
+    <tbody>
+                        <tr            
+                            style="background-color: white;"
+            >
+            <td style="white-space: nowrap"><strong>pvc-13802d56-b2d7-47b1-8141-04b5fdccddae</strong></td>
+            <td>20Gi</td>
+            <td>ReadWriteOnce</td>
+            <td>Retain</td>
+            <td>Released</td>
+            <td>app02/app02-operator-app02-fluentd-buffer-app02-operator-app02-fluentd-0</td>
+            <td>nfs-client</td>
+            <td>2023-08-22T16:41:24Z</td>
+        </tr>
+
+            </tbody>
+</table>
+            <td><strong>logs reduced for sample report</strong></td>
+
+</div>
+
+
+<div id="poddetails" class="tab-content">
+    <h2>Running POD's</h2>
+<table border="1" id="runningpodstable">
+    <thead>
+        <tr>
+            <th>Node 
+                <br>
+                <span onclick="sortTable('runningpodstable', 0, 'asc')" style="cursor: pointer;">&#x25B2;</span>
+                <span onclick="sortTable('runningpodstable', 0, 'desc')" style="cursor: pointer;">&#x25BC;</span>
+                <input type="text" onkeyup="filterTable('runningpodstable')" placeholder="Search for node..">
+            </th>
+            <th>Namespace 
+                <br>
+                <span onclick="sortTable('runningpodstable', 1, 'asc')" style="cursor: pointer;">&#x25B2;</span>
+                <span onclick="sortTable('runningpodstable', 1, 'desc')" style="cursor: pointer;">&#x25BC;</span>
+                <input type="text" onkeyup="filterTable('runningpodstable')" placeholder="Search for namespace..">
+            </th>
+            <th>Name 
+                <br>
+                <span onclick="sortTable('runningpodstable', 2, 'asc')" style="cursor: pointer;">&#x25B2;</span>
+                <span onclick="sortTable('runningpodstable', 2, 'desc')" style="cursor: pointer;">&#x25BC;</span>
+                <input type="text" onkeyup="filterTable('runningpodstable')" placeholder="Search for name..">
+            </th>
+            <th>Ready 
+                <br>
+                <span onclick="sortTable('runningpodstable', 3, 'asc')" style="cursor: pointer;">&#x25B2;</span>
+                <span onclick="sortTable('runningpodstable', 3, 'desc')" style="cursor: pointer;">&#x25BC;</span>
+                <input type="text" onkeyup="filterTable('runningpodstable')" placeholder="Search for ready..">
+            </th>
+            <th>Status 
+                <br>
+                <span onclick="sortTable('runningpodstable', 4, 'asc')" style="cursor: pointer;">&#x25B2;</span>
+                <span onclick="sortTable('runningpodstable', 4, 'desc')" style="cursor: pointer;">&#x25BC;</span>
+                <input type="text" onkeyup="filterTable('runningpodstable')" placeholder="Search for status..">
+            </th>
+            <th>Restarts 
+                <br>
+                <span onclick="sortTable('runningpodstable', 5, 'asc')" style="cursor: pointer;">&#x25B2;</span>
+                <span onclick="sortTable('runningpodstable', 5, 'desc')" style="cursor: pointer;">&#x25BC;</span>
+            </th>
+            <th>Age 
+                <br>
+                <span onclick="sortTable('runningpodstable', 6, 'asc')" style="cursor: pointer;">&#x25B2;</span>
+                <span onclick="sortTable('runningpodstable', 6, 'desc')" style="cursor: pointer;">&#x25BC;</span>
+            </th>
+            <th>IP 
+                <br>
+                <span onclick="sortTable('runningpodstable', 7, 'asc')" style="cursor: pointer;">&#x25B2;</span>
+                <span onclick="sortTable('runningpodstable', 7, 'desc')" style="cursor: pointer;">&#x25BC;</span>
+            </th>
+        </tr>
+    </thead>
+    <tbody>
+                        <tr
+                            style="background-color: white;"
+            >
+            <td><strong>trdev-sjfhz-worker-wlxp6</strong></td>
+            <td><strong>app01</strong></td>
+            <td><strong>app01-68fd9bf557-h2hjr</strong></td>
+            <td>1/1</td>
+            <td>Running</td>
+            <td>0</td>
+            <td>49d</td>
+            <td>10.131.2.15</td>
+        </tr>
+                        <tr
+                            style="background-color: #f0f0f0;"
+            >
+            <td><strong>trdev-sjfhz-worker-fr8w6</strong></td>
+            <td><strong>app02</strong></td>
+            <td><strong>app02-operator-7c4b984ffb-fm7ps</strong></td>
+            <td>1/1</td>
+            <td>Running</td>
+            <td>53 (14h ago)</td>
+            <td>49d</td>
+            <td>10.128.4.9</td>
+        </tr>
+                        <tr
+                            style="background-color: white;"
+            >
+            <td><strong>trdev-sjfhz-worker-xh9sg</strong></td>
+            <td><strong>app02</strong></td>
+            <td><strong>app02-operator-app02-log-4kzhl</strong></td>
+            <td>1/1</td>
+            <td>Running</td>
+            <td>3</td>
+            <td>173d</td>
+            <td>10.130.2.6</td>
+        </tr>
+                        <tr
+                            style="background-color: #f0f0f0;"
+            >
+            <td><strong>trdev-sjfhz-worker-fdvl6</strong></td>
+            <td><strong>app02</strong></td>
+            <td><strong>app02-operator-app02-log-9tw45</strong></td>
+            <td>1/1</td>
+            <td>Running</td>
+            <td>3</td>
+            <td>173d</td>
+            <td>10.129.2.3</td>
+        </tr>
+                        <tr
+                            style="background-color: white;"
+            >
+            <td><strong>trdev-sjfhz-worker-kn4xp</strong></td>
+            <td><strong>app02</strong></td>
+            <td><strong>app02-operator-app02-log-g7v9g</strong></td>
+            <td>1/1</td>
+            <td>Running</td>
+            <td>3</td>
+            <td>173d</td>
+            <td>10.131.0.6</td>
+        </tr>
+                        <tr
+                            style="background-color: #f0f0f0;"
+            >
+            <td><strong>trdev-sjfhz-worker-wlxp6</strong></td>
+            <td><strong>app02</strong></td>
+            <td><strong>app02-operator-app02-log-gtf6h</strong></td>
+            <td>1/1</td>
+            <td>Running</td>
+            <td>2</td>
+            <td>173d</td>
+            <td>10.131.2.3</td>
+        </tr>
+                        <tr
+                            style="background-color: white;"
+            >
+            <td><strong>trdev-sjfhz-worker-k88j6</strong></td>
+            <td><strong>app02</strong></td>
+            <td><strong>app02-operator-app02-log-k85s2</strong></td>
+            <td>1/1</td>
+            <td>Running</td>
+            <td>3</td>
+            <td>173d</td>
+            <td>10.129.4.3</td>
+        </tr>
+                        <tr
+                            style="background-color: #f0f0f0;"
+            >
+            <td><strong>trdev-sjfhz-worker-2hqsv</strong></td>
+            <td><strong>app02</strong></td>
+            <td><strong>app02-operator-app02-log-kqrj6</strong></td>
+            <td>1/1</td>
+            <td>Running</td>
+            <td>2</td>
+            <td>173d</td>
+            <td>10.128.2.2</td>
+        </tr>
+ 
+                        <tr
+                            style="background-color: #f0f0f0;"
+            >
+            <td><strong>trdev-sjfhz-master-0</strong></td>
+            <td><strong>openshift-machine-config-operator</strong></td>
+            <td><strong>machine-config-operator-7ffc87d975-tfgkq</strong></td>
+            <td>2/2</td>
+            <td>Running</td>
+            <td>3 (12d ago)</td>
+            <td>49d</td>
+            <td>10.128.0.35</td>
+        </tr>
+                        <tr
+                            style="background-color: white;"
+            >
+            <td><strong>trdev-sjfhz-master-0</strong></td>
+            <td><strong>openshift-machine-config-operator</strong></td>
+            <td><strong>machine-config-server-4wpff</strong></td>
+            <td>1/1</td>
+            <td>Running</td>
+            <td>1</td>
+            <td>49d</td>
+            <td>1.1.1.33</td>
+        </tr>
+                        <tr
+                            style="background-color: #f0f0f0;"
+            >
+            <td><strong>trdev-sjfhz-master-2</strong></td>
+            <td><strong>openshift-machine-config-operator</strong></td>
+            <td><strong>machine-config-server-7x8vt</strong></td>
+            <td>1/1</td>
+            <td>Running</td>
+            <td>1</td>
+            <td>49d</td>
+            <td>1.1.1.32</td>
+        </tr>
+                        <tr
+                            style="background-color: white;"
+            >
+            <td><strong>trdev-sjfhz-master-1</strong></td>
+            <td><strong>openshift-machine-config-operator</strong></td>
+            <td><strong>machine-config-server-rmcl8</strong></td>
+            <td>1/1</td>
+            <td>Running</td>
+            <td>1</td>
+            <td>49d</td>
+            <td>1.1.1.31</td>
+        </tr>
+                        <tr
+                            style="background-color: #f0f0f0;"
+            >
+            <td><strong>trdev-sjfhz-master-1</strong></td>
+            <td><strong>openshift-marketplace</strong></td>
+            <td><strong>certified-operators-7pmtx</strong></td>
+            <td>1/1</td>
+            <td>Running</td>
+            <td>0</td>
+            <td>14h</td>
+            <td>10.130.0.60</td>
+        </tr>
+                        <tr
+                            style="background-color: white;"
+            >
+            <td><strong>trdev-sjfhz-master-1</strong></td>
+            <td><strong>openshift-marketplace</strong></td>
+            <td><strong>community-operators-jbcbh</strong></td>
+            <td>1/1</td>
+            <td>Running</td>
+            <td>0</td>
+            <td>4h58m</td>
+            <td>10.130.1.13</td>
+        </tr>
+                        <tr
+                            style="background-color: #f0f0f0;"
+            >
+            <td><strong>trdev-sjfhz-master-2</strong></td>
+            <td><strong>openshift-marketplace</strong></td>
+            <td><strong>marketplace-operator-6bc55f6ffd-r5b9h</strong></td>
+            <td>1/1</td>
+            <td>Running</td>
+            <td>4 (12d ago)</td>
+            <td>49d</td>
+            <td>10.129.0.30</td>
+        </tr>
+                        <tr
+                            style="background-color: white;"
+            >
+            <td><strong>trdev-sjfhz-master-1</strong></td>
+            <td><strong>openshift-marketplace</strong></td>
+            <td><strong>redhat-marketplace-thh4s</strong></td>
+            <td>1/1</td>
+            <td>Running</td>
+            <td>0</td>
+            <td>3d11h</td>
+            <td>10.130.0.81</td>
+        </tr>
+                        <tr
+                            style="background-color: #f0f0f0;"
+            >
+            <td><strong>trdev-sjfhz-master-1</strong></td>
+            <td><strong>openshift-marketplace</strong></td>
+            <td><strong>redhat-operators-gphqn</strong></td>
+            <td>1/1</td>
+            <td>Running</td>
+            <td>0</td>
+            <td>13h</td>
+            <td>10.130.0.95</td>
+        </tr>
+
+
+            </tbody>
+</table>
+            <td><strong>logs reduced for sample report</strong></td>
+
+</div>
+
+
+ <div id="toppod" class="tab-content">
+    <h2>TOP POD</h2>
+<table border="1" id="toppodtable">
+    <thead>
+        <tr>
+            <th>Namespace 
+                <br>
+                <span onclick="sortTable('toppodtable', 0, 'asc')" style="cursor: pointer;">&#x25B2;</span>
+                <span onclick="sortTable('toppodtable', 0, 'desc')" style="cursor: pointer;">&#x25BC;</span>
+                <input type="text" onkeyup="filterTable('toppodtable')" placeholder="Search..">
+            </th>
+            <th>Pod Name
+                <br>
+                <span onclick="sortTable('toppodtable', 1, 'asc')" style="cursor: pointer;">&#x25B2;</span>
+                <span onclick="sortTable('toppodtable', 1, 'desc')" style="cursor: pointer;">&#x25BC;</span>
+                <input type="text" onkeyup="filterTable('toppodtable')" placeholder="Search..">
+            <th>Cpu Usage (CORES)
+                <br>
+                <span onclick="sortTable('toppodtable', 2, 'asc')" style="cursor: pointer;">&#x25B2;</span>
+                <span onclick="sortTable('toppodtable', 2, 'desc')" style="cursor: pointer;">&#x25BC;</span>
+                <input type="text" onkeyup="filterTable('toppodtable')" placeholder="Search..">
+            </th>
+            <th>Memory Usage (MB)
+                <br>
+                <span onclick="sortTable('toppodtable', 3, 'asc')" style="cursor: pointer;">&#x25B2;</span>
+                <span onclick="sortTable('toppodtable', 3, 'desc')" style="cursor: pointer;">&#x25BC;</span>
+                <input type="text" onkeyup="filterTable('toppodtable')" placeholder="Search..">
+
+            </th>
+        </tr>
+    </thead>
+    <tbody>
+                        <tr
+                            style="background-color: white;"
+            >
+            <td><strong>app01</strong></td>
+            <td><strong>app01-68fd9bf557-h2hjr</strong></td>
+            <td>0m</td>
+            <td>0Mi</td>
+        </tr>
+                        <tr
+                            style="background-color: #f0f0f0;"
+            >
+            <td><strong>app02</strong></td>
+            <td><strong>app02-operator-7c4b984ffb-fm7ps</strong></td>
+            <td>2m</td>
+            <td>100Mi</td>
+        </tr>
+                        <tr
+                            style="background-color: white;"
+            >
+            <td><strong>app02</strong></td>
+            <td><strong>app02-operator-app02-log-4kzhl</strong></td>
+            <td>1m</td>
+            <td>64Mi</td>
+        </tr>
+                        <tr
+                            style="background-color: #f0f0f0;"
+            >
+            <td><strong>app02</strong></td>
+            <td><strong>app02-operator-app02-log-9tw45</strong></td>
+            <td>5m</td>
+            <td>46Mi</td>
+        </tr>
+                        <tr
+                            style="background-color: white;"
+            >
+            <td><strong>app02</strong></td>
+            <td><strong>app02-operator-app02-log-g7v9g</strong></td>
+            <td>3m</td>
+            <td>63Mi</td>
+        </tr>
+                        <tr
+                            style="background-color: #f0f0f0;"
+            >
+            <td><strong>app02</strong></td>
+            <td><strong>app02-operator-app02-log-gtf6h</strong></td>
+            <td>2m</td>
+            <td>46Mi</td>
+        </tr>
+                        <tr
+                            style="background-color: white;"
+            >
+            <td><strong>app02</strong></td>
+            <td><strong>app02-operator-app02-log-k85s2</strong></td>
+            <td>0m</td>
+            <td>39Mi</td>
+        </tr>
+                        <tr
+                            style="background-color: #f0f0f0;"
+            >
+            <td><strong>app02</strong></td>
+            <td><strong>app02-operator-app02-log-kqrj6</strong></td>
+            <td>4m</td>
+            <td>58Mi</td>
+        </tr>
+                        <tr
+                            style="background-color: white;"
+            >
+            <td><strong>app02</strong></td>
+            <td><strong>app02-operator-app02-log-kvjzx</strong></td>
+            <td>9m</td>
+            <td>40Mi</td>
+        </tr>
+                        <tr
+                            style="background-color: #f0f0f0;"
+            >
+            <td><strong>app02</strong></td>
+            <td><strong>app02-operator-app02-fluentd-0</strong></td>
+            <td>12m</td>
+            <td>189Mi</td>
+        </tr>
+                        <tr
+                            style="background-color: white;"
+            >
+            <td><strong>app02</strong></td>
+            <td><strong>opensearch-dashboards-54858fd5cd-qcnjw</strong></td>
+            <td>1m</td>
+            <td>143Mi</td>
+        </tr>
+                        <tr
+                            style="background-color: #f0f0f0;"
+            >
+            <td><strong>monitoring</strong></td>
+            <td><strong>monitoring-grafana-597cf9f676-kffrc</strong></td>
+            <td>0m</td>
+            <td>66Mi</td>
+        </tr>
+                        <tr
+                            style="background-color: white;"
+            >
+            <td><strong>nfs-provisioner</strong></td>
+            <td><strong>nfs-provisioner-nfs-subdir-external-provisioner-77c6bbc4684hbz7</strong></td>
+            <td>0m</td>
+            <td>18Mi</td>
+        </tr>
+                        <tr
+                            style="background-color: #f0f0f0;"
+            >
+            <td><strong>openshift-apiserver</strong></td>
+            <td><strong>apiserver-d577d664d-9mxf2</strong></td>
+            <td>19m</td>
+            <td>467Mi</td>
+        </tr>
+                        <tr
+                            style="background-color: white;"
+            >
+            <td><strong>openshift-apiserver</strong></td>
+            <td><strong>apiserver-d577d664d-lhng6</strong></td>
+            <td>14m</td>
+            <td>481Mi</td>
+        </tr>
+                        <tr
+                            style="background-color: #f0f0f0;"
+            >
+            <td><strong>openshift-apiserver</strong></td>
+            <td><strong>apiserver-d577d664d-vxvxl</strong></td>
+            <td>28m</td>
+            <td>497Mi</td>
+        </tr>
+                        <tr
+                            style="background-color: white;"
+            >
+            <td><strong>openshift-apiserver-operator</strong></td>
+            <td><strong>openshift-apiserver-operator-55d6d7f565-l8grw</strong></td>
+            <td>3m</td>
+            <td>211Mi</td>
+        </tr>
+                        <tr
+                            style="background-color: #f0f0f0;"
+            >
+            <td><strong>openshift-authentication</strong></td>
+            <td><strong>oauth-openshift-56cb8d9664-42b66</strong></td>
+            <td>1m</td>
+            <td>68Mi</td>
+        </tr>
+                        <tr
+                            style="background-color: white;"
+            >
+            <td><strong>openshift-authentication</strong></td>
+            <td><strong>oauth-openshift-56cb8d9664-ch54s</strong></td>
+            <td>1m</td>
+            <td>77Mi</td>
+        </tr>
+                        <tr
+                            style="background-color: #f0f0f0;"
+            >
+            <td><strong>openshift-authentication</strong></td>
+            <td><strong>oauth-openshift-56cb8d9664-rx295</strong></td>
+            <td>2m</td>
+            <td>57Mi</td>
+        </tr>
+                        <tr
+                            style="background-color: white;"
+            >
+            <td><strong>openshift-authentication-operator</strong></td>
+            <td><strong>authentication-operator-7d45cd8d88-z5bsh</strong></td>
+            <td>9m</td>
+            <td>163Mi</td>
+        </tr>
+                        <tr
+                            style="background-color: #f0f0f0;"
+            >
+            <td><strong>openshift-cloud-controller-manager</strong></td>
+            <td><strong>vsphere-cloud-controller-manager-5596db75cb-9hbpw</strong></td>
+            <td>0m</td>
+            <td>46Mi</td>
+        </tr>
+                        <tr
+                            style="background-color: white;"
+            >
+            <td><strong>openshift-cloud-controller-manager</strong></td>
+            <td><strong>vsphere-cloud-controller-manager-5596db75cb-rspg2</strong></td>
+            <td>0m</td>
+            <td>51Mi</td>
+        </tr>
+                        <tr
+                            style="background-color: #f0f0f0;"
+            >
+            <td><strong>openshift-cloud-controller-manager-operator</strong></td>
+            <td><strong>cluster-cloud-controller-manager-operator-6888f64c67-mjvzr</strong></td>
+            <td>1m</td>
+            <td>122Mi</td>
+        </tr>
+                        <tr
+                            style="background-color: white;"
+            >
+            <td><strong>openshift-cloud-credential-operator</strong></td>
+            <td><strong>cloud-credential-operator-5b588cc6f-pqgb9</strong></td>
+            <td>1m</td>
+            <td>92Mi</td>
+        </tr>
+                        <tr
+                            style="background-color: #f0f0f0;"
+            >
+            <td><strong>openshift-cluster-csi-drivers</strong></td>
+            <td><strong>vmware-vsphere-csi-driver-controller-7db74585d7-7zn4k</strong></td>
+            <td>0m</td>
+            <td>459Mi</td>
+        </tr>
+            </tbody>
+</table>
+            <td><strong>logs reduced for sample report</strong></td>
+</div>
+
+ <div id="namespaces" class="tab-content">
+    <h2>Namespaces</h2>
+<table border="1" id="namespacetable">
+    <thead>
+        <tr>
+            <th>Name
+            <br>
+                <span onclick="sortTable('namespacetable', 0, 'asc')" style="cursor: pointer;">&#x25B2;</span>
+                <span onclick="sortTable('namespacetable', 0, 'desc')" style="cursor: pointer;">&#x25BC;</span>
+                <input type="text" onkeyup="filterTable('namespacetable')" placeholder="Search ..">
+            </th>
+            <th>Status
+            <br>
+                <span onclick="sortTable('namespacetable', 1, 'asc')" style="cursor: pointer;">&#x25B2;</span>
+                <span onclick="sortTable('namespacetable', 1, 'desc')" style="cursor: pointer;">&#x25BC;</span>
+            </th>
+            <th>Age
+            <br>
+                <span onclick="sortTable('namespacetable', 2, 'asc')" style="cursor: pointer;">&#x25B2;</span>
+                <span onclick="sortTable('namespacetable', 2, 'desc')" style="cursor: pointer;">&#x25BC;</span>
+            </th>
+        </tr>
+    </thead>
+    <tbody>
+                        <tr            
+                            style="background-color: white;"
+            >
+            <td style="white-space: nowrap"><strong>default</strong></td>
+            <td>Active</td>
+            <td>10d</td>
+        </tr>
+                        <tr            
+                            style="background-color: #f0f0f0;"
+            >
+            <td style="white-space: nowrap"><strong>kube-node-lease</strong></td>
+            <td>Active</td>
+            <td>10d</td>
+        </tr>
+                        <tr            
+                            style="background-color: white;"
+            >
+            <td style="white-space: nowrap"><strong>kube-public</strong></td>
+            <td>Active</td>
+            <td>10d</td>
+        </tr>
+                        <tr            
+                            style="background-color: #f0f0f0;"
+            >
+            <td style="white-space: nowrap"><strong>kube-system</strong></td>
+            <td>Active</td>
+            <td>10d</td>
+        </tr>
+                        <tr            
+                            style="background-color: white;"
+            >
+            <td style="white-space: nowrap"><strong>app01</strong></td>
+            <td>Active</td>
+            <td>452d</td>
+        </tr>
+                        <tr            
+                            style="background-color: #f0f0f0;"
+            >
+            <td style="white-space: nowrap"><strong>app02</strong></td>
+            <td>Active</td>
+            <td>447d</td>
+        </tr>
+                        <tr            
+                            style="background-color: white;"
+            >
+            <td style="white-space: nowrap"><strong>monitoring</strong></td>
+            <td>Active</td>
+            <td>369d</td>
+        </tr>
+                        <tr            
+                            style="background-color: #f0f0f0;"
+            >
+            <td style="white-space: nowrap"><strong>nfs-provisioner</strong></td>
+            <td>Active</td>
+            <td>452d</td>
+        </tr>
+                        <tr            
+                            style="background-color: white;"
+            >
+            <td style="white-space: nowrap"><strong>openshift</strong></td>
+            <td>Active</td>
+            <td>10d</td>
+        </tr>
+                        <tr            
+                            style="background-color: #f0f0f0;"
+            >
+            <td style="white-space: nowrap"><strong>openshift-apiserver</strong></td>
+            <td>Active</td>
+            <td>10d</td>
+        </tr>
+                        <tr            
+                            style="background-color: white;"
+            >
+            <td style="white-space: nowrap"><strong>openshift-apiserver-operator</strong></td>
+            <td>Active</td>
+            <td>10d</td>
+        </tr>
+                        <tr            
+                            style="background-color: #f0f0f0;"
+            >
+            <td style="white-space: nowrap"><strong>openshift-authentication</strong></td>
+            <td>Active</td>
+            <td>10d</td>
+        </tr>
+                        <tr            
+                            style="background-color: white;"
+            >
+            <td style="white-space: nowrap"><strong>openshift-authentication-operator</strong></td>
+            <td>Active</td>
+            <td>10d</td>
+        </tr>
+                        <tr            
+                            style="background-color: #f0f0f0;"
+            >
+            <td style="white-space: nowrap"><strong>openshift-cloud-controller-manager</strong></td>
+            <td>Active</td>
+            <td>10d</td>
+        </tr>
+                        <tr            
+                            style="background-color: white;"
+            >
+            <td style="white-space: nowrap"><strong>openshift-cloud-controller-manager-operator</strong></td>
+            <td>Active</td>
+            <td>10d</td>
+        </tr>
+                        <tr            
+                            style="background-color: #f0f0f0;"
+            >
+            <td style="white-space: nowrap"><strong>openshift-cloud-credential-operator</strong></td>
+            <td>Active</td>
+            <td>10d</td>
+        </tr>
+                        <tr            
+                            style="background-color: white;"
+            >
+            <td style="white-space: nowrap"><strong>openshift-cloud-network-config-controller</strong></td>
+            <td>Active</td>
+            <td>10d</td>
+        </tr>
+                        <tr            
+                            style="background-color: #f0f0f0;"
+            >
+            <td style="white-space: nowrap"><strong>openshift-cluster-csi-drivers</strong></td>
+            <td>Active</td>
+            <td>10d</td>
+        </tr>
+                        <tr            
+                            style="background-color: white;"
+            >
+            <td style="white-space: nowrap"><strong>openshift-cluster-machine-approver</strong></td>
+            <td>Active</td>
+            <td>10d</td>
+        </tr>
+                        <tr            
+                            style="background-color: #f0f0f0;"
+            >
+            <td style="white-space: nowrap"><strong>openshift-cluster-node-tuning-operator</strong></td>
+            <td>Active</td>
+            <td>10d</td>
+        </tr>
+                        <tr            
+                            style="background-color: white;"
+            >
+            <td style="white-space: nowrap"><strong>openshift-cluster-samples-operator</strong></td>
+            <td>Active</td>
+            <td>10d</td>
+        </tr>
+                        <tr            
+                            style="background-color: #f0f0f0;"
+            >
+            <td style="white-space: nowrap"><strong>openshift-cluster-storage-operator</strong></td>
+            <td>Active</td>
+            <td>10d</td>
+        </tr>
+                        <tr            
+                            style="background-color: white;"
+            >
+            <td style="white-space: nowrap"><strong>openshift-cluster-version</strong></td>
+            <td>Active</td>
+            <td>10d</td>
+        </tr>
+                        <tr            
+                            style="background-color: #f0f0f0;"
+            >
+            <td style="white-space: nowrap"><strong>openshift-config</strong></td>
+            <td>Active</td>
+            <td>10d</td>
+        </tr>
+                        <tr            
+                            style="background-color: white;"
+            >
+            <td style="white-space: nowrap"><strong>openshift-config-managed</strong></td>
+            <td>Active</td>
+            <td>10d</td>
+        </tr>
+                        <tr            
+                            style="background-color: #f0f0f0;"
+            >
+            <td style="white-space: nowrap"><strong>openshift-config-operator</strong></td>
+            <td>Active</td>
+            <td>10d</td>
+        </tr>
+                        <tr            
+                            style="background-color: white;"
+            >
+            <td style="white-space: nowrap"><strong>openshift-console</strong></td>
+            <td>Active</td>
+            <td>10d</td>
+        </tr>
+                        <tr            
+                            style="background-color: #f0f0f0;"
+            >
+            <td style="white-space: nowrap"><strong>openshift-console-operator</strong></td>
+            <td>Active</td>
+            <td>10d</td>
+        </tr>
+                        <tr            
+                            style="background-color: white;"
+            >
+            <td style="white-space: nowrap"><strong>openshift-console-user-settings</strong></td>
+            <td>Active</td>
+            <td>10d</td>
+        </tr>
+                        <tr            
+                            style="background-color: #f0f0f0;"
+            >
+            <td style="white-space: nowrap"><strong>openshift-controller-manager</strong></td>
+            <td>Active</td>
+            <td>10d</td>
+        </tr>
+                        <tr            
+                            style="background-color: white;"
+            >
+            <td style="white-space: nowrap"><strong>openshift-controller-manager-operator</strong></td>
+            <td>Active</td>
+            <td>10d</td>
+        </tr>
+                        <tr            
+                            style="background-color: #f0f0f0;"
+            >
+            <td style="white-space: nowrap"><strong>openshift-dns</strong></td>
+            <td>Active</td>
+            <td>10d</td>
+        </tr>
+                        <tr            
+                            style="background-color: white;"
+            >
+            <td style="white-space: nowrap"><strong>openshift-dns-operator</strong></td>
+            <td>Active</td>
+            <td>10d</td>
+        </tr>
+                        <tr            
+                            style="background-color: #f0f0f0;"
+            >
+            <td style="white-space: nowrap"><strong>openshift-etcd</strong></td>
+            <td>Active</td>
+            <td>10d</td>
+        </tr>
+                        <tr            
+                            style="background-color: white;"
+            >
+            <td style="white-space: nowrap"><strong>openshift-etcd-operator</strong></td>
+            <td>Active</td>
+            <td>10d</td>
+        </tr>
+                        <tr            
+                            style="background-color: #f0f0f0;"
+            >
+            <td style="white-space: nowrap"><strong>openshift-gitops</strong></td>
+            <td>Active</td>
+            <td>453d</td>
+        </tr>
+                        <tr            
+                            style="background-color: white;"
+            >
+            <td style="white-space: nowrap"><strong>openshift-host-network</strong></td>
+            <td>Active</td>
+            <td>10d</td>
+        </tr>
+                        <tr            
+                            style="background-color: #f0f0f0;"
+            >
+            <td style="white-space: nowrap"><strong>openshift-image-registry</strong></td>
+            <td>Active</td>
+            <td>10d</td>
+        </tr>
+                        <tr            
+                            style="background-color: white;"
+            >
+            <td style="white-space: nowrap"><strong>openshift-infra</strong></td>
+            <td>Active</td>
+            <td>10d</td>
+        </tr>
+                        <tr            
+                            style="background-color: #f0f0f0;"
+            >
+            <td style="white-space: nowrap"><strong>openshift-ingress</strong></td>
+            <td>Active</td>
+            <td>10d</td>
+        </tr>
+                        <tr            
+                            style="background-color: white;"
+            >
+            <td style="white-space: nowrap"><strong>openshift-ingress-canary</strong></td>
+            <td>Active</td>
+            <td>10d</td>
+        </tr>
+                        <tr            
+                            style="background-color: #f0f0f0;"
+            >
+            <td style="white-space: nowrap"><strong>openshift-ingress-operator</strong></td>
+            <td>Active</td>
+            <td>10d</td>
+        </tr>
+                        <tr            
+                            style="background-color: white;"
+            >
+            <td style="white-space: nowrap"><strong>openshift-insights</strong></td>
+            <td>Active</td>
+            <td>10d</td>
+        </tr>
+                        <tr            
+                            style="background-color: #f0f0f0;"
+            >
+            <td style="white-space: nowrap"><strong>openshift-kni-infra</strong></td>
+            <td>Active</td>
+            <td>10d</td>
+        </tr>
+                        <tr            
+                            style="background-color: white;"
+            >
+            <td style="white-space: nowrap"><strong>openshift-kube-apiserver</strong></td>
+            <td>Active</td>
+            <td>10d</td>
+        </tr>
+                        <tr            
+                            style="background-color: #f0f0f0;"
+            >
+            <td style="white-space: nowrap"><strong>openshift-kube-apiserver-operator</strong></td>
+            <td>Active</td>
+            <td>10d</td>
+        </tr>
+                        <tr            
+                            style="background-color: white;"
+            >
+            <td style="white-space: nowrap"><strong>openshift-kube-controller-manager</strong></td>
+            <td>Active</td>
+            <td>10d</td>
+        </tr>
+                        <tr            
+                            style="background-color: #f0f0f0;"
+            >
+            <td style="white-space: nowrap"><strong>openshift-kube-controller-manager-operator</strong></td>
+            <td>Active</td>
+            <td>10d</td>
+        </tr>
+                        <tr            
+                            style="background-color: white;"
+            >
+            <td style="white-space: nowrap"><strong>openshift-kube-scheduler</strong></td>
+            <td>Active</td>
+            <td>10d</td>
+        </tr>
+                        <tr            
+                            style="background-color: #f0f0f0;"
+            >
+            <td style="white-space: nowrap"><strong>openshift-kube-scheduler-operator</strong></td>
+            <td>Active</td>
+            <td>10d</td>
+        </tr>
+                        <tr            
+                            style="background-color: white;"
+            >
+            <td style="white-space: nowrap"><strong>openshift-kube-storage-version-migrator</strong></td>
+            <td>Active</td>
+            <td>10d</td>
+        </tr>
+                        <tr            
+                            style="background-color: #f0f0f0;"
+            >
+            <td style="white-space: nowrap"><strong>openshift-kube-storage-version-migrator-operator</strong></td>
+            <td>Active</td>
+            <td>10d</td>
+        </tr>
+                        <tr            
+                            style="background-color: white;"
+            >
+            <td style="white-space: nowrap"><strong>openshift-machine-api</strong></td>
+            <td>Active</td>
+            <td>10d</td>
+        </tr>
+                        <tr            
+                            style="background-color: #f0f0f0;"
+            >
+            <td style="white-space: nowrap"><strong>openshift-machine-config-operator</strong></td>
+            <td>Active</td>
+            <td>10d</td>
+        </tr>
+                        <tr            
+                            style="background-color: white;"
+            >
+            <td style="white-space: nowrap"><strong>openshift-marketplace</strong></td>
+            <td>Active</td>
+            <td>10d</td>
+        </tr>
+                        <tr            
+                            style="background-color: #f0f0f0;"
+            >
+            <td style="white-space: nowrap"><strong>openshift-monitoring</strong></td>
+            <td>Active</td>
+            <td>10d</td>
+        </tr>
+                        <tr            
+                            style="background-color: white;"
+            >
+            <td style="white-space: nowrap"><strong>openshift-multus</strong></td>
+            <td>Active</td>
+            <td>10d</td>
+        </tr>
+                        <tr            
+                            style="background-color: #f0f0f0;"
+            >
+            <td style="white-space: nowrap"><strong>openshift-network-diagnostics</strong></td>
+            <td>Active</td>
+            <td>10d</td>
+        </tr>
+                        <tr            
+                            style="background-color: white;"
+            >
+            <td style="white-space: nowrap"><strong>openshift-network-node-identity</strong></td>
+            <td>Active</td>
+            <td>49d</td>
+        </tr>
+                        <tr            
+                            style="background-color: #f0f0f0;"
+            >
+            <td style="white-space: nowrap"><strong>openshift-network-operator</strong></td>
+            <td>Active</td>
+            <td>10d</td>
+        </tr>
+                        <tr            
+                            style="background-color: white;"
+            >
+            <td style="white-space: nowrap"><strong>openshift-node</strong></td>
+            <td>Active</td>
+            <td>10d</td>
+        </tr>
+                        <tr            
+                            style="background-color: #f0f0f0;"
+            >
+            <td style="white-space: nowrap"><strong>openshift-nutanix-infra</strong></td>
+            <td>Active</td>
+            <td>10d</td>
+        </tr>
+                        <tr            
+                            style="background-color: white;"
+            >
+            <td style="white-space: nowrap"><strong>openshift-oauth-apiserver</strong></td>
+            <td>Active</td>
+            <td>10d</td>
+        </tr>
+                        <tr            
+                            style="background-color: #f0f0f0;"
+            >
+            <td style="white-space: nowrap"><strong>openshift-openstack-infra</strong></td>
+            <td>Active</td>
+            <td>10d</td>
+        </tr>
+                        <tr            
+                            style="background-color: white;"
+            >
+            <td style="white-space: nowrap"><strong>openshift-operator-lifecycle-manager</strong></td>
+            <td>Active</td>
+            <td>10d</td>
+        </tr>
+                        <tr            
+                            style="background-color: #f0f0f0;"
+            >
+            <td style="white-space: nowrap"><strong>openshift-operators</strong></td>
+            <td>Active</td>
+            <td>10d</td>
+        </tr>
+                        <tr            
+                            style="background-color: white;"
+            >
+            <td style="white-space: nowrap"><strong>openshift-ovirt-infra</strong></td>
+            <td>Active</td>
+            <td>10d</td>
+        </tr>
+                        <tr            
+                            style="background-color: #f0f0f0;"
+            >
+            <td style="white-space: nowrap"><strong>openshift-route-controller-manager</strong></td>
+            <td>Active</td>
+            <td>10d</td>
+        </tr>
+                        <tr            
+                            style="background-color: white;"
+            >
+            <td style="white-space: nowrap"><strong>openshift-sdn</strong></td>
+            <td>Active</td>
+            <td>10d</td>
+        </tr>
+                        <tr            
+                            style="background-color: #f0f0f0;"
+            >
+            <td style="white-space: nowrap"><strong>openshift-service-ca</strong></td>
+            <td>Active</td>
+            <td>10d</td>
+        </tr>
+                        <tr            
+                            style="background-color: white;"
+            >
+            <td style="white-space: nowrap"><strong>openshift-service-ca-operator</strong></td>
+            <td>Active</td>
+            <td>10d</td>
+        </tr>
+                        <tr            
+                            style="background-color: #f0f0f0;"
+            >
+            <td style="white-space: nowrap"><strong>openshift-user-workload-monitoring</strong></td>
+            <td>Active</td>
+            <td>10d</td>
+        </tr>
+                        <tr            
+                            style="background-color: white;"
+            >
+            <td style="white-space: nowrap"><strong>openshift-vsphere-infra</strong></td>
+            <td>Active</td>
+            <td>10d</td>
+        </tr>
+            </tbody>
+</table></div>
+
+<div id="NamespacesAndProject" class="tab-content">
+    <div class="grid-container2">
+        <div class="grid-item2">
+        </div>
+        <div class="grid-item2">
+         </div>
+    </div>
+</div>
+
+ <div id="users" class="tab-content">
+    <h2>Users and Assigned Roles</h2>
+<table border="1" id="userroletable">
+    <thead>
+        <tr>
+            <th>Username
+            <br>
+                <span onclick="sortTable('userroletable', 0, 'asc')" style="cursor: pointer;">&#x25B2;</span>
+                <span onclick="sortTable('userroletable', 0, 'desc')" style="cursor: pointer;">&#x25BC;</span>
+                <input type="text" onkeyup="filterTable('userroletable')" placeholder="Search ..">
+            </th>
+            <th>Full Name
+            <br>
+                <span onclick="sortTable('userroletable', 1, 'asc')" style="cursor: pointer;">&#x25B2;</span>
+                <span onclick="sortTable('userroletable', 1, 'desc')" style="cursor: pointer;">&#x25BC;</span>
+                <input type="text" onkeyup="filterTable('userroletable')" placeholder="Search ..">
+            </th>
+            <th>Namespace
+            <br>
+                <span onclick="sortTable('userroletable', 2, 'asc')" style="cursor: pointer;">&#x25B2;</span>
+                <span onclick="sortTable('userroletable', 2, 'desc')" style="cursor: pointer;">&#x25BC;</span>
+                <input type="text" onkeyup="filterTable('userroletable')" placeholder="Search ..">
+            </th>
+            <th>Role
+            <br>
+                <span onclick="sortTable('userroletable', 3, 'asc')" style="cursor: pointer;">&#x25B2;</span>
+                <span onclick="sortTable('userroletable', 3, 'desc')" style="cursor: pointer;">&#x25BC;</span>
+                <input type="text" onkeyup="filterTable('userroletable')" placeholder="Search ..">
+            </th>
+            <th>Creation Date
+            <br>
+                <span onclick="sortTable('userroletable', 4, 'asc')" style="cursor: pointer;">&#x25B2;</span>
+                <span onclick="sortTable('userroletable', 4, 'desc')" style="cursor: pointer;">&#x25BC;</span>
+            </th>
+        </tr>
+    </thead>
+    <tbody>
+                        <tr            
+                            style="background-color: white;"
+            >
+            <td>user1</td>
+            <td>user1</td>
+            <td>openshift-console-user-settings</td>
+            <td >user-settings-af26c879-bbc40ee3-role</td>
+            <td>2024-11-03T18:56:37Z</td>
+        </tr>
+            </tbody>
+</table>
+
+<h2>Groups and Assingned Roles</h2>
+<table border="1" id="groupstable">
+    <thead>
+        <tr>
+            <th>Group Name
+            <br>
+                <span onclick="sortTable('groupstable', 0, 'asc')" style="cursor: pointer;">&#x25B2;</span>
+                <span onclick="sortTable('groupstable', 0, 'desc')" style="cursor: pointer;">&#x25BC;</span>
+                <input type="text" onkeyup="filterTable('groupstable')" placeholder="Search ..">
+            </th>
+            <th>Namespaces
+            <br>
+                <span onclick="sortTable('groupstable', 1, 'asc')" style="cursor: pointer;">&#x25B2;</span>
+                <span onclick="sortTable('groupstable', 1, 'desc')" style="cursor: pointer;">&#x25BC;</span>
+                <input type="text" onkeyup="filterTable('groupstable')" placeholder="Search ..">
+            </th>
+            <th>Role
+            <br>
+                <span onclick="sortTable('groupstable', 2, 'asc')" style="cursor: pointer;">&#x25B2;</span>
+                <span onclick="sortTable('groupstable', 2, 'desc')" style="cursor: pointer;">&#x25BC;</span>
+                <input type="text" onkeyup="filterTable('groupstable')" placeholder="Search ..">
+            </th>
+            <th>Role Binding
+            <br>
+                <span onclick="sortTable('groupstable', 3, 'asc')" style="cursor: pointer;">&#x25B2;</span>
+                <span onclick="sortTable('groupstable', 3, 'desc')" style="cursor: pointer;">&#x25BC;</span>
+                <input type="text" onkeyup="filterTable('groupstable')" placeholder="Search ..">
+            </th>
+        </tr>
+    </thead>
+    <tbody>
+                         <tr            
+                            style="background-color: white;"
+            >
+            <td>devops</td>
+            <td>Cluster</td>
+            <td  style="font-weight: bold;background-color: orange; color: white; text-align: center;" >cluster-admin</td>
+            <td>user1</td>
+        </tr>
+            </tbody>
+</table>
+
+
+<h2>Groups Members</h2>
+<table border="1" id="groupmemberstable">
+    <thead>
+        <tr>
+            <th>Group Name
+            <br>
+                <span onclick="sortTable('groupmemberstable', 0, 'asc')" style="cursor: pointer;">&#x25B2;</span>
+                <span onclick="sortTable('groupmemberstable', 0, 'desc')" style="cursor: pointer;">&#x25BC;</span>
+                <input type="text" onkeyup="filterTable('groupmemberstable')" placeholder="Search ..">
+            </th>
+            <th>Username
+            <br>
+                <span onclick="sortTable('groupmemberstable', 1, 'asc')" style="cursor: pointer;">&#x25B2;</span>
+                <span onclick="sortTable('groupmemberstable', 1, 'desc')" style="cursor: pointer;">&#x25BC;</span>
+                <input type="text" onkeyup="filterTable('groupmemberstable')" placeholder="Search ..">
+            </th>
+            <th>Full Name
+            <br>
+                <span onclick="sortTable('groupmemberstable', 2, 'asc')" style="cursor: pointer;">&#x25B2;</span>
+                <span onclick="sortTable('groupmemberstable', 2, 'desc')" style="cursor: pointer;">&#x25BC;</span>
+                <input type="text" onkeyup="filterTable('groupmemberstable')" placeholder="Search ..">
+            </th>
+        </tr>
+    </thead>
+    <tbody>
+                        <tr            
+                            style="background-color: white;"
+            >
+            <td>devops</td>
+            <td>user1</td>
+            <td >Test User</td>
+        </tr>
+            </tbody>
+</table></div>
+
+ <div id="applications" class="tab-content">
+    <h2>Installed Operator</h2>
+<table border="1">
+    <thead>
+        <tr>
+            <th>Name</th>
+            <th>Age</th>
+        </tr>
+    </thead>
+    <tbody>
+                        <tr            
+                            style="background-color: white;"
+            >
+            <td><strong>openshift-gitops-operator.openshift-operators</strong></td>
+            <td>453d</td>
+        </tr>
+                        <tr            
+                            style="background-color: #f0f0f0;"
+            >
+            <td><strong>strimzi-kafka-operator.openshift-operators</strong></td>
+            <td>448d</td>
+        </tr>
+            </tbody>
+</table> 
+
+<br>
+
+<h2>Cluster Services</h2>
+<table border="1">
+    <thead>
+        <tr>
+            <th>Name</th>
+            <th>Version</th>
+            <th>Replaces</th>
+            <th>Phase</th>
+        </tr>
+    </thead>
+    <tbody>
+                        <tr            
+                            style="background-color: white;"
+            >
+            <td><strong>openshift-gitops-operator.v1.8.3</strong></td>
+            <td><strong>Red Hat OpenShift GitOps</strong></td>
+            <td>1.8.3</td>
+            <td>openshift-gitops-operator.v1.8.2</td>
+        </tr>
+                        <tr            
+                            style="background-color: #f0f0f0;"
+            >
+            <td><strong>strimzi-cluster-operator.v0.34.0</strong></td>
+            <td><strong>Strimzi</strong></td>
+            <td>0.34.0</td>
+            <td>strimzi-cluster-operator.v0.33.2</td>
+        </tr>
+            </tbody>
+</table>
+
+<br>
+
+<h2> GitOps Status</h2>
+<table border="1" id="appstable">
+    <thead>
+        <tr>
+            <th>Name
+                <br>
+                <span onclick="sortTable('appstable', 0, 'asc')" style="cursor: pointer;">&#x25B2;</span>
+                <span onclick="sortTable('appstable', 0, 'desc')" style="cursor: pointer;">&#x25BC;</span>
+                <input type="text" onkeyup="filterTable('appstable')" placeholder="Search.."> 
+            </th>
+            <th>Namespace
+                <br>
+                <span onclick="sortTable('appstable', 1, 'asc')" style="cursor: pointer;">&#x25B2;</span>
+                <span onclick="sortTable('appstable', 1, 'desc')" style="cursor: pointer;">&#x25BC;</span>
+                <input type="text" onkeyup="filterTable('appstable')" placeholder="Search.."> 
+            </th>
+            <th>Sync Status
+                <br>
+                <span onclick="sortTable('appstable', 2, 'asc')" style="cursor: pointer;">&#x25B2;</span>
+                <span onclick="sortTable('appstable', 2, 'desc')" style="cursor: pointer;">&#x25BC;</span>
+                <input type="text" onkeyup="filterTable('appstable')" placeholder="Search.."> 
+            </th>
+            <th>Health Status
+                <br>
+                <span onclick="sortTable('appstable', 3, 'asc')" style="cursor: pointer;">&#x25B2;</span>
+                <span onclick="sortTable('appstable', 3, 'desc')" style="cursor: pointer;">&#x25BC;</span>
+                <input type="text" onkeyup="filterTable('appstable')" placeholder="Search.."> 
+            </th>
+            <th>Source
+                <br>
+                <span onclick="sortTable('appstable', 4, 'asc')" style="cursor: pointer;">&#x25B2;</span>
+                <span onclick="sortTable('appstable', 4, 'desc')" style="cursor: pointer;">&#x25BC;</span>
+            </th>
+            <th>Revision</th>
+        </tr>
+    </thead>
+    <tbody>
+                        <tr            
+                            style="background-color: white;"
+            >
+            <td>openshift-gitops</td>
+            <td>test-app4</td>
+            <td>Synced</td>
+            <td>Healthy</td>
+            <td>https://demo.example.io/helm/v1/repo</td>
+            <td>1.1.1</td>
+        </tr>
+                        <tr            
+                            style="background-color: #f0f0f0;"
+            >
+            <td>openshift-gitops</td>
+            <td>test-app3</td>
+            <td>Synced</td>
+            <td>Healthy</td>
+            <td>https://demo.example.io/helm/v1/repo</td>
+            <td>1.0.1</td>
+        </tr>
+                        <tr            
+                            style="background-color: white;"
+            >
+            <td>openshift-gitops</td>
+            <td>nfs-provisioner</td>
+            <td>OutOfSync</td>
+            <td>Healthy</td>
+            <td>https://demo.example.io/helm/v1/repo</td>
+            <td>1.1.2</td>
+        </tr>
+                        <tr            
+                            style="background-color: #f0f0f0;"
+            >
+            <td>openshift-gitops</td>
+            <td>test-app</td>
+            <td>OutOfSync</td>
+            <td>Healthy</td>
+            <td>https://demo.example.io/helm/v1/repo</td>
+            <td>1.1.3</td>
+        </tr>
+                        <tr            
+                            style="background-color: white;"
+            >
+            <td>openshift-gitops</td>
+            <td>test-app2</td>
+            <td>Synced</td>
+            <td>Healthy</td>
+            <td>https://demo.example.io/helm/v1/repo</td>
+            <td>1.1.3</td>
+        </tr>
+                        <tr            
+                            style="background-color: #f0f0f0;"
+            >
+            <td>openshift-gitops</td>
+            <td>test-app1</td>
+            <td>Synced</td>
+            <td>Healthy</td>
+            <td>https://demo.example.io/helm/v1/repo</td>
+            <td>1.1.3</td>
+        </tr>
+                        <tr            
+                            style="background-color: white;"
+            >
+            <td>openshift-gitops</td>
+            <td>dev</td>
+            <td>OutOfSync</td>
+            <td>Healthy</td>
+            <td>https://demo.example.io/helm/v1/repo</td>
+            <td>1.1.3</td>
+        </tr>
+            </tbody>
+</table></div>
+
+</div>
+</body>
+</html>
