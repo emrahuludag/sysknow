@@ -46,7 +46,7 @@ This Ansible playbook generates a single HTML report to monitor the health statu
 Clone or copy this repository on the ansible node
 
 ```bash
-git clone https://github.com/kxr/ocpcr.git
+git clone https://github.com/emrahuludag/openshift-report.git
 ```
 
 Edit variables;
