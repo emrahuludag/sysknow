@@ -91,11 +91,11 @@ ansible-playbook ocp4-report.yml
 
 [ Click OpenShift Full Sample Report](./openshift/img/openshift-sample-report.html)
 
-![](./img/ocp-report-sample01.png? ':size=50%')
-![](./img/ocp-report-sample02.png? ':size=50%')
-![](./img/ocp-report-sample03.png? ':size=50%')
-![](./img/ocp-report-sample04.png? ':size=50%')
-![](./img/ocp-report-sample05.png? ':size=50%')
-![](./img/ocp-report-sample06.png? ':size=50%')
-![](./img/ocp-report-sample07.png? ':size=50%')
+![](./img/ocp-report-sample01.png? ':size=80%')
+![](./img/ocp-report-sample02.png? ':size=80%')
+![](./img/ocp-report-sample03.png? ':size=80%')
+![](./img/ocp-report-sample04.png? ':size=80%')
+![](./img/ocp-report-sample05.png? ':size=80%')
+![](./img/ocp-report-sample06.png? ':size=80%')
+![](./img/ocp-report-sample07.png? ':size=20%')
 
