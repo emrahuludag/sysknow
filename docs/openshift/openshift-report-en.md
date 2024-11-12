@@ -22,7 +22,7 @@ This Ansible playbook generates a single HTML report to monitor the health statu
 	* get-pods-distribution: Displays distribution of pods across nodes
 	* get-etcd-stats: Collects ETCD pods status
 	* get-update-status: Checks for cluster update progress and status
-	* get-deployments: Gathers deployment statuses in namespaces
+	* get-deployments: Gathers deployment statuses in namespaces. Single running pod are highlighted
 	* get-ssl: Validates SSL certificates and expiration dates
 	* get-alert: Retrieves active alerts within the cluster
 	* get-pod-health: Checks health and status of individual pods
@@ -38,7 +38,7 @@ This Ansible playbook generates a single HTML report to monitor the health statu
 	* get-machine: Gathers machine information in the cluster
 	* get-daemonset: Checks DaemonSet statuses
 	* get-apps: Retrieves application statuses and configurations
-	* send-mail: Sends the generated report via email
+	* send-mail: Sends the generated report via email.
 	* send-teams-notifications: Sends the alert notifications via teams and mail
 
 ### How to usage
@@ -89,9 +89,13 @@ ansible-playbook ocp4-report.yml
 
 # Sample Report
 
-[ Click OpenShift Sample Report](./img/openshift-sample-report.html)
+[ Click OpenShift Sample Report](./openshift/img/openshift-sample-report.html)
 
-<iframe src="https://github.com/emrahuludag/sysknow/raw/main/docs/openshift/img/openshift-sample-report.html" width="100%" height="200"></iframe>
-
-<iframe src="openshift-sample-report.html" width="100%" height="200"></iframe>
+![](./img/ocp-report-sample01.png? ':size=50%')
+![](./img/ocp-report-sample02.png? ':size=50%')
+![](./img/ocp-report-sample03.png? ':size=50%')
+![](./img/ocp-report-sample04.png? ':size=50%')
+![](./img/ocp-report-sample05.png? ':size=50%')
+![](./img/ocp-report-sample06.png? ':size=50%')
+![](./img/ocp-report-sample07.png? ':size=50%')
 
