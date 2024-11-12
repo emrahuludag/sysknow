@@ -89,11 +89,9 @@ ansible-playbook ocp4-report.yml
 
 # Sample Report
 
+[ Click OpenShift Sample Report](./img/openshift-sample-report.html)
+
 <iframe src="https://github.com/emrahuludag/sysknow/raw/main/docs/openshift/img/openshift-sample-report.html" width="100%" height="200"></iframe>
-
-
-
-<?php include('./img/openshift-sample-report.html'); ?>
 
 <iframe src="openshift-sample-report.html" width="100%" height="200"></iframe>
 
