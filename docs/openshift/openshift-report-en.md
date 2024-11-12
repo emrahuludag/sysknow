@@ -1,5 +1,5 @@
 
-![](./img/Ansible-and-Openshift? ':size=50%')
+![](./img/Ansible-and-Openshift.png? ':size=50%')
 
 # Automated Health Report for OpenShift Cluster with Ansible
 
@@ -88,7 +88,5 @@ ansible-playbook ocp4-report.yml
 ```
 
 # Sample Report
-
-<iframe src="./img/openshift-sample-report.html" width="80%" height="200"></iframe>
 
 <iframe src="./img/openshift-sample-report.html" width="100%" height="200"></iframe>
