@@ -3,11 +3,13 @@
 
 # Health Check OpenShift Cluster with AWX
 
-This playbook connects to OpenShift (IPI) clusters via AWX, monitoring the health of nodes and cluster operators. If any issues are detected, it promptly sends alerts through both email and Microsoft Teams, ensuring rapid awareness and response to cluster health concerns
+Automation has become a fundamental way to enhance efficiency, reduce human errors, and accelerate processes within IT infrastructure today. By automating repetitive tasks and complex workflows, operations can run smoothly without manual intervention, allowing IT teams to focus on more strategic, value-generating work. Furthermore, automation provides scalability and consistency essential for keeping up with rapidly growing digital demands, ensuring the security and continuity of systems.
+
+For OpenShift environments located across different remote locations, the automation solution I developed offers a centralized way to monitor and report on the health status of all clusters regularly. This automation immediately sends notifications via Microsoft Teams and email when an issue is detected, enabling infra and DevOps teams to respond quickly. Consequently, the reliability and performance of OpenShift infrastructure across multiple locations are monitored and managed more effectively, delivering greater resilience and efficiency.
 
 
 > [!NOTE|style:flat]
-> This playbook tested with 4.11.x, 4.12.x, 4.13.x and 4.14.38 Openshift version.
+> This playbook tested with 4.11.x, 4.12.x, 4.13.x and 4.14.38 Openshift (IPI) version.
 > Some modules may work for UPI clusters.
 
 ### Features

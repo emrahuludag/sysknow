@@ -3,10 +3,12 @@
 
 # Automated OpenShift Cluster Health Report
 
-This playbook generates a single HTML report to monitor the health status of an OpenShift (IPI) cluster. The playbook checks the status of key components within the cluster, providing system administrators with a quick overview of the cluster's health. This allows administrators to detect and address potential issues in the OpenShift environment promptly.
+Automation has become a fundamental way to enhance efficiency, reduce human errors, and accelerate processes within IT infrastructure today. By automating repetitive tasks and complex workflows, operations can run smoothly without manual intervention, allowing IT teams to focus on more strategic, value-generating work. Furthermore, automation provides scalability and consistency essential for keeping up with rapidly growing digital demands, ensuring the security and continuity of systems.
+
+For OpenShift environments located across different remote locations, the automation solution I developed offers a centralized way to monitor and report on the health status of all clusters regularly. This automation immediately sends notifications via Microsoft Teams and email when an issue is detected, enabling infra and DevOps teams to respond quickly. Consequently, the reliability and performance of OpenShift infrastructure across multiple locations are monitored and managed more effectively, delivering greater resilience and efficiency.
 
 > [!NOTE|style:flat]
-> This playbook tested with 4.11.x, 4.12.x, 4.13.x and 4.14.38 Openshift version.
+> This playbook tested with 4.11.x, 4.12.x, 4.13.x and 4.14.38 Openshift (IPI) version.
 > Some modules may work for UPI clusters.
 
 ### Features
