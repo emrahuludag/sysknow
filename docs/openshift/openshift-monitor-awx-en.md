@@ -79,7 +79,9 @@ Playbook > roles/send-mail-monitoring/tasks/main.yml
 ```
 
 Create AWX Project and sync git repo.
+
 Git repo
+
 ```bash
 https://github.com/emrahuludag/openshift-report.git
 ```
