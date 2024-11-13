@@ -3,7 +3,7 @@
 
 # Automated Health Report for OpenShift Cluster with Ansible
 
-This Ansible playbook generates a single HTML report to monitor the health status of an OpenShift (IPI) cluster. The playbook checks the status of key components within the cluster, providing system administrators with a quick overview of the cluster's health. This allows administrators to detect and address potential issues in the OpenShift environment promptly.
+This playbook generates a single HTML report to monitor the health status of an OpenShift (IPI) cluster. The playbook checks the status of key components within the cluster, providing system administrators with a quick overview of the cluster's health. This allows administrators to detect and address potential issues in the OpenShift environment promptly.
 
 > [!NOTE|style:flat]
 > This playbook tested with 4.11.x, 4.12.x, 4.13.x and 4.14.38 Openshift version.
@@ -14,8 +14,8 @@ This Ansible playbook generates a single HTML report to monitor the health statu
 * Generates a stand-alone HTML file for OpenShift cluster health
 * Requires oc, jq, and python-jmespath packages on Ansible nodes
 * Light-weight and provides table filtering functionality, allowing users to filter and view specific data within tables
-* OC commands are run directly on the cluster, and data processing on the Ansible node
-* Modular design, making it easy to add new report components
+* OC commands are run directly on the Ansible node
+* Modular design, making it easy to add new components
 * Available Modules:
  	* oc-logout: Logs out from OpenShift to ensure session security
 	* get-token: Retrieves the access token for API requests
@@ -45,6 +45,18 @@ This Ansible playbook generates a single HTML report to monitor the health statu
 	* send-mail: Sends the generated report via email.
 
 ### How to usage
+Install packages
+
+```bash
+yum install python3-jmespath jq
+```
+
+Install collections   community.general, ansible.posix, ansible.utils
+
+
+```bash
+ansible-galaxy install -r collections/requirements.yml
+```
 
 Clone or copy this repository on the ansible node
 
@@ -53,6 +65,7 @@ git clone https://github.com/emrahuludag/openshift-report.git
 ```
 
 Edit variables;
+
 ```bash
 vi ./vars/main.yaml 
 ```
@@ -90,10 +103,28 @@ And run the ocp4-report.yml playbook.
 ansible-playbook ocp4-report.yml
 ```
 
+
+# Schedule Report
+
+
+Create script daily.sh
+
+```bash
+#!/bin/sh
+/usr/bin/ansible-playbook /openshift-report/ocp4_report.yml
+```
+
+Add cron job 
+Script will run 07:00 AM 
+
+```bash
+0 7 * * * /openshift-report/daily.sh
+```
+
+
 # Sample Report
 
-Right click to save attachment [OpenShift Full Sample Report](https://github.com/emrahuludag/sysknow/raw/main/docs/openshift/img/openshift-sample-report.html)
-
+Right click to save [OpenShift Full Sample Report](https://github.com/emrahuludag/sysknow/raw/main/docs/openshift/img/openshift-sample-report.html)
 
 ![](./img/ocp-report-sample01.png? ':size=80%')
 ![](./img/ocp-report-sample02.png? ':size=80%')
@@ -104,4 +135,6 @@ Right click to save attachment [OpenShift Full Sample Report](https://github.com
 ![](./img/ocp-report-sample06.png? ':size=80%')
 
 ![](./img/ocp-report-sample07.png? ':size=20%')
+
+
 
