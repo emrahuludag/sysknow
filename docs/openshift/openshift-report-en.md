@@ -5,8 +5,9 @@
 
 This Ansible playbook generates a single HTML report to monitor the health status of an OpenShift (IPI) cluster. The playbook checks the status of key components within the cluster, providing system administrators with a quick overview of the cluster's health. This allows administrators to detect and address potential issues in the OpenShift environment promptly.
 
-> [!style:flat]
-> This playbook tested with 4.11.x, 4.12.x, 4.13.x and 4.14.38 Openshift version. Some modules  may work for UPI clusters.
+> [!NOTE|style:flat]
+> This playbook tested with 4.11.x, 4.12.x, 4.13.x and 4.14.38 Openshift version.
+> Some modules may work for UPI clusters.
 
 ### Features
 
