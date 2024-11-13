@@ -49,11 +49,13 @@ Prepare a Teams channel to receive Webhooks
 I have created a new channel called “Cluster Alerts”. You can configure webhooks for this channel by easily going into the “Connectors” option. Then, create api url and configure playbook.
 
 ![](./img/awx-ocp407.png? ':size=20%')
+
 ![](./img/awx-ocp408.png? ':size=20%')
+
 ![](./img/awx-ocp409.png? ':size=20%')
 
 
-Playbok > roles/send-mail-monitoring/tasks/main.yml
+Playbook > roles/send-mail-monitoring/tasks/main.yml
 
 ```bash
 - name: Send a notification to Teams Channel
