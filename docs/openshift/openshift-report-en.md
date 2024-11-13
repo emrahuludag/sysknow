@@ -131,8 +131,10 @@ Right click to save [OpenShift Full Sample Report](https://github.com/emrahuluda
 ![](./img/ocp-report-sample03.png? ':size=80%')
 ![](./img/ocp-report-sample04.png? ':size=80%')
 ![](./img/ocp-report-sample05.png? ':size=80%')
+
 ![](./img/ocp-report-sample06.png? ':size=80%')
-![](./img/ocp-report-sample07.png? ':size=80%')
+
+![](./img/ocp-report-sample07.png? ':size=20%')
 
 
 

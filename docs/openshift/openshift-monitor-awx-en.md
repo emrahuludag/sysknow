@@ -48,9 +48,9 @@ ansible-galaxy install -r collections/requirements.yml
 Prepare a Teams channel to receive Webhooks
 I have created a new channel called “Cluster Alerts”. You can configure webhooks for this channel by easily going into the “Connectors” option. Then, create api url and configure playbook.
 
-![](./img/awx-ocp407.png? ':size=50%')
-![](./img/awx-ocp408.png? ':size=50%')
-![](./img/awx-ocp409.png? ':size=50%')
+![](./img/awx-ocp407.png? ':size=20%')
+![](./img/awx-ocp408.png? ':size=20%')
+![](./img/awx-ocp409.png? ':size=20%')
 
 
 Playbok > roles/send-mail-monitoring/tasks/main.yml
@@ -115,7 +115,7 @@ If you have multiple environments, you can create a workflow to add each of them
 ![](./img/awx-ocp404.png? ':size=50%')
 
 
-### Sample Report And Alert
+### Sample Report and Alerts
 
 ![](./img/awx-ocp405.png? ':size=50%')
 
