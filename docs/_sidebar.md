@@ -17,7 +17,9 @@
 * [Kubernetes](/kubernetes/)
 - [AWX](/awx/)
 * [Openshift](/openshift/)
-  - [Automated Health Report for OpenShift Cluster with Ansible EN](openshift/openshift-report-en)
+  - [ Automated OpenShift Cluster Health Report ](./openshift/openshift-report-en)
+  - [ Health Check OpenShift Cluster with AWX ](./openshift/openshift-monitor-awx-en)
+  
 
 
 
