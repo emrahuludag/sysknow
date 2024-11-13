@@ -104,7 +104,7 @@ ansible-playbook ocp4-report.yml
 ```
 
 
-# Schedule Report
+### Schedule Report
 
 
 Create script daily.sh
@@ -122,7 +122,7 @@ Script will run 07:00 AM
 ```
 
 
-# Sample Report
+### Sample Report
 
 Right click to save [OpenShift Full Sample Report](https://github.com/emrahuludag/sysknow/raw/main/docs/openshift/img/openshift-sample-report.html)
 
