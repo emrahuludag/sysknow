@@ -43,8 +43,7 @@ This Ansible playbook generates a single HTML report to monitor the health statu
 	* get-daemonset: Checks DaemonSet statuses
 	* get-apps: Retrieves application statuses and configurations
 	* send-mail: Sends the generated report via email.
-	* send-teams-notifications: Sends the alert notifications via teams and mail
-
+	
 ### How to usage
 
 Clone or copy this repository on the ansible node
