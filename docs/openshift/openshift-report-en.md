@@ -44,7 +44,7 @@ This playbook generates a single HTML report to monitor the health status of an 
 	* get-apps: Retrieves application statuses and configurations
 	* send-mail: Sends the generated report via email.
 
-### How to usage
+### How to use
 Install packages
 
 ```bash

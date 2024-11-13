@@ -30,7 +30,7 @@ This playbook connects to OpenShift (IPI) clusters via AWX, monitoring the healt
 	* get-total-resource: Summary of total cluster resources
 	* send-mail: Sends the generated report via email and microsoft teams.
 
-### How to usage
+### How to use
 
 
 Install packages on Ansible Nodes
