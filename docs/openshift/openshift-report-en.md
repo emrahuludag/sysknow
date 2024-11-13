@@ -5,6 +5,9 @@
 
 This Ansible playbook generates a single HTML report to monitor the health status of an OpenShift (IPI) cluster. The playbook checks the status of key components within the cluster, providing system administrators with a quick overview of the cluster's health. This allows administrators to detect and address potential issues in the OpenShift environment promptly.
 
+> [!TIP|style:flat]
+> This playbook tested with 4.11 to 4.14.38 Openshift version. Some modules will not work for UPI clusters.
+
 ### Features
 
 * Generates a stand-alone HTML file for OpenShift cluster health
@@ -18,7 +21,7 @@ This Ansible playbook generates a single HTML report to monitor the health statu
 	* get-nodes: Collects node information, including health and resource usage
 	* get-co: Gathers ClusterOperator status for component health
 	* get-resource: Checks available and used resources across nodes
-	* get-node-conditions: Reports on node conditions and possible issues
+	* get-node-conditions: Reports on node conditions and possible memory, cpu, kubelet services issues
 	* get-pods-distribution: Displays distribution of pods across nodes
 	* get-etcd-stats: Collects ETCD pods status
 	* get-update-status: Checks for cluster update progress and status
@@ -26,16 +29,16 @@ This Ansible playbook generates a single HTML report to monitor the health statu
 	* get-ssl: Validates SSL certificates and expiration dates
 	* get-alert: Retrieves active alerts within the cluster
 	* get-pod-health: Checks health and status of individual pods
-	* get-overcommitted: Identifies overcommitted resources
+	* get-overcommitted: Get overcommitted  node status
 	* get-pv: Monitors Persistent Volume status and availability
 	* get-pod-status: Collects overall pod status across the cluster
 	* get-pod-usage: Checks resource usage metrics of pods
 	* get-ns: Lists namespaces and their statuses
-	* get-route: Retrieves route configurations and access points
-	* get-total-resource: Provides a summary of total cluster resources
-	* get-operators: Reports on Operator statuses and health
-	* get-users-group: Lists users and groups with cluster access
-	* get-machine: Gathers machine information in the cluster
+	* get-route: Route lists
+	* get-total-resource: Summary of total cluster resources
+	* get-operators: Cluster Operator statuses and health
+	* get-users-group: Lists users and groups
+	* get-machine: Gathers machine information
 	* get-daemonset: Checks DaemonSet statuses
 	* get-apps: Retrieves application statuses and configurations
 	* send-mail: Sends the generated report via email.
@@ -97,6 +100,8 @@ ansible-playbook ocp4-report.yml
 ![](./img/ocp-report-sample03.png? ':size=80%')
 ![](./img/ocp-report-sample04.png? ':size=80%')
 ![](./img/ocp-report-sample05.png? ':size=80%')
+
 ![](./img/ocp-report-sample06.png? ':size=80%')
+
 ![](./img/ocp-report-sample07.png? ':size=20%')
 
