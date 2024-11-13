@@ -1,7 +1,7 @@
 
 ![](./img/Ansible-and-Openshift.png? ':size=50%')
 
-# OpenShift Cluster Health Check and Alerting with AWX
+# Health Check OpenShift Cluster with AWX
 
 This playbook connects to OpenShift (IPI) clusters via AWX, monitoring the health of nodes and cluster operators. If any issues are detected, it promptly sends alerts through both email and Microsoft Teams, ensuring rapid awareness and response to cluster health concerns
 

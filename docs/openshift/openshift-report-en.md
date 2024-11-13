@@ -1,7 +1,7 @@
 
 ![](./img/Ansible-and-Openshift.png? ':size=50%')
 
-# Automated Health Report for OpenShift Cluster
+# Automated OpenShift Cluster Health Report
 
 This playbook generates a single HTML report to monitor the health status of an OpenShift (IPI) cluster. The playbook checks the status of key components within the cluster, providing system administrators with a quick overview of the cluster's health. This allows administrators to detect and address potential issues in the OpenShift environment promptly.
 

@@ -1,4 +1,4 @@
 ### Openshift Icerik
 
-- [ Automated Health Report for OpenShift Cluster with Ansible EN ](./openshift/openshift-report-en)
-- [ Ansible ile Openshift Cluster Sağlık Raporu TR ](./openshift/openshift-report)
+- [ Automated Health Report for OpenShift Cluster ](./openshift/openshift-report-en)
+- [ OpenShift Cluster Health Check and Alerting with AWX ](./openshift/openshift-monitor-awx-en)
