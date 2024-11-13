@@ -5,7 +5,7 @@
 
 Automation has become a fundamental way to enhance efficiency, reduce human errors, and accelerate processes within IT infrastructure today. By automating repetitive tasks and complex workflows, operations can run smoothly without manual intervention, allowing IT teams to focus on more strategic, value-generating work. Furthermore, automation provides scalability and consistency essential for keeping up with rapidly growing digital demands, ensuring the security and continuity of systems.
 
-For OpenShift environments located across different remote locations, the automation solution I developed offers a centralized way to monitor and report on the health status of all clusters regularly. This automation immediately sends notifications via Microsoft Teams and email when an issue is detected, enabling infra and DevOps teams to respond quickly. Consequently, the reliability and performance of OpenShift infrastructure across multiple locations are monitored and managed more effectively, delivering greater resilience and efficiency.
+For OpenShift environments located across different remote locations, the ansible automation solution I developed offers a centralized way to monitor and report on the health status of all clusters regularly. This automation immediately sends notifications via Microsoft Teams and email when an issue is detected, enabling infra and DevOps teams to respond quickly. Consequently, the reliability and performance of OpenShift infrastructure across multiple locations are monitored and managed more effectively, delivering greater resilience and efficiency.
 
 
 > [!NOTE|style:flat]
