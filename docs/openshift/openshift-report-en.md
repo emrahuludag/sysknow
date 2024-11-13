@@ -43,7 +43,7 @@ This Ansible playbook generates a single HTML report to monitor the health statu
 	* get-daemonset: Checks DaemonSet statuses
 	* get-apps: Retrieves application statuses and configurations
 	* send-mail: Sends the generated report via email.
-	
+
 ### How to usage
 
 Clone or copy this repository on the ansible node
@@ -92,7 +92,7 @@ ansible-playbook ocp4-report.yml
 
 # Sample Report
 
-[Click OpenShift Full Sample Report](https://github.com/emrahuludag/sysknow/raw/main/docs/openshift/img/openshift-sample-report.html)
+Right click to save attachment [OpenShift Full Sample Report](https://github.com/emrahuludag/sysknow/raw/main/docs/openshift/img/openshift-sample-report.html)
 
 
 ![](./img/ocp-report-sample01.png? ':size=80%')
