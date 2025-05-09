@@ -39,7 +39,7 @@ to designated recipients.
 set-location $RVToolsPath
 
 # =====================================
-# RVTools TAV - A-site-vmwarename
+# RVTools - A-site-vmwarename
 # =====================================
 [string] $VCServer = "x.x.x.x"                    
 [string] $User = "username@vsphere.local"                                                    
@@ -65,7 +65,7 @@ $OutputFile = $XlsxFileoutput
 
 
 # =====================================
-# RVTools TAV - B-site-vmwarename
+# RVTools - B-site-vmwarename
 # =====================================
 
 [string] $VCServer = "x.x.x.x"                    
