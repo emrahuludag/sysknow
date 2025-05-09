@@ -329,6 +329,7 @@ Script, sadece belirttiğiniz alanları filtreleyerek tüm verileri birleştiriy
 
 Böylece envanterden “işe yarayan” veriye hızlıca ulaşabilirsiniz.
 
+> Gereksinimler : pip install pandas openpyxl
 
 ```bash
 import pandas as pd
