@@ -3,11 +3,11 @@
 Bu script, birden fazla VMware vCenter ortamına bağlanır, RVTools ile vm inventory bilgilerini export alır
 ve alınan Excel dosyalarını tek bir özet raporda birleştirir. Daha sonra belirtilen adrese alınan exportları mail olarak gönderir.
 
-> Not: RVTools gibi envanter datası toplayan araçlarla vCenter'a erişim sağlanırken "Read-Only" yetkili bir kullanıcı hesabı kullanılması kesinlikle tavsiye edilir.
+> RVTools gibi envanter datası toplayan araçlarla vCenter'a erişim sağlanırken "Read-Only" yetkili bir kullanıcı hesabı kullanılması kesinlikle tavsiye edilir.
 
 > RVTools, varsayılan olarak .ini dosyasında kullanıcı adı ve şifre bilgilerini düz metin olarak saklar. Bu durum, özellikle paylaşımlı sistemlerde veya otomatik çalışan script’lerde güvenlik açığı oluşturabilir. Dolayısı ile RVToolsPasswordEncryption kullanınız.
 
-> Not: Sadece iki VMware ortam için script kısaltıldı. Ne kadar ortamınız varsa script içerisinde kodu değiştirip kullanabilirsiniz.
+> Sadece iki VMware ortam için script kısaltıldı. Ne kadar ortamınız varsa script içerisinde kodu değiştirip kullanabilirsiniz.
 
 Windows "Schedule Task" veya Linux ortamlarda Cron oluşturup otomatize edebilirsiniz.  
 Faydalı olması dileğiyle.
