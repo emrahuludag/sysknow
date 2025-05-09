@@ -416,17 +416,4 @@ Exported files:
 PS C:\Users\Desktop\rvtools_export
 ```
 
-```
-
-# OUTPUT
-```bash
-PS C:\Users\Desktop\rvtools_export> & C:/Users/Desktop//.venv/Scripts/python.exe "c:/Users/Desktop/rvtools_export/combine_files copy.py"
-Current Working Directory: C:\Users\Desktop\rvtools_export
-Processing A-site-vmwarename.xlsx
-Processing B-site-vmwarename.xlsx
-Exported files:
-- ./exports\rvtools_export.xlsx
-- ./exports\rvtools_export.csv
-PS C:\Users\Desktop\rvtools_export
-```
 ![](./img/rvtools.png? ':size=80%')
