@@ -1,8 +1,8 @@
-# RVTools Report Script
+# RVTools Grafana Dashboard
 
 RVTools scripti ile envanter export almıştık ancak Excel'de envanter tutmaktan yine kurtulamamıştık. Bu bölümde alınan csv exportu bir grafana kurup dashboard hazırlamaya değineceğiz.
 
-# Grafana Kurulum
+### Grafana Kurulum
 Docker veya podman kurulumuna değinmiyorum, ufak bir google araması ile ulaşabilirsiniz.
 
 Data dizinimizi oluşturalım
@@ -38,23 +38,23 @@ Container'ımız çalışmaya başladı.
 CONTAINER ID  IMAGE                                 COMMAND     CREATED      STATUS        PORTS                   NAMES
 cf3fc9758cdd  docker.io/grafana/grafana-oss:latest              7 hours ago  Up 2 seconds  0.0.0.0:3000->3000/tcp  grafana
 ```
-# CSV Plugin Kurulum
+### CSV Plugin Kurulum
 
-[http://](http://10.1.1.1:3000/) UI'u açalım ve öncelikle Plugins bölümünden CSV plugin'in kuralım.
+http://IP:3000/ UI'u açalım ve öncelikle Plugins bölümünden CSV plugin'in kuralım.
 
 ![](./img/grafana1.png? ':size=80%')
 
 
-# Data Source Eklenmesi
+### Data Source Eklenmesi
 Kurmuş olduğumuz plugin'den bir data source oluşturuyoruz. 
 
 ![](./img/grafana2.png? ':size=80%')
 
-RVTools  ile export aldığımız csv dosyasını ister içerisinden istersenizde bir web-server üzederinden gösterebilirsiniz.
+RVTools  ile export aldığımız csv dosyasını local veya bir web-server üzerinden gösterebilirsiniz. Ortamınıza göre değerlendirebilirsiniz. Burada örnek olarak generate etmiş olduğum bir datayı server üzerinden gösteriyorum.
 
 ![](./img/grafana3.png? ':size=80%')
 
-# Dashboard Oluşturulması
+### Dashboard Oluşturulması
 
 Dashboard > Add visualization
 
@@ -85,7 +85,7 @@ Color scheme > Classic Palette
 
 Save Dashboard ile yaptığımız değişiklikleri kayıt ediyoruz.
 
-# Dashboard Yayınlanması
+### Dashboard Yayınlanması
 
 Share > Share externally ile isterseniz bir link oluşturuyoruz. Bu linki erişmenizi istediğiniz ekip arkadaşlarınız paylaşarak herkesin erişimine açabilirsiniz.
 
@@ -94,11 +94,12 @@ Share > Share externally ile isterseniz bir link oluşturuyoruz. Bu linki erişm
 ![](./img/grafana_final.png? ':size=80%')
 
 
-# Sonuc
+### Sonuc
 
 * Scriptler yardımı ile almış olduğumuz envanterimizi herkese farklı versiyonda Excel ile dağıtmak yerine tek bir noktadan eriştirebilir hale getirdik.
+* Sunucularınızı vmware de taglıyorsanız bu dataları da rvtools ile alabiliyorsunuz. Ekip bazlı filtrelemek kolay hale geliyor.
 * Scriptinizi ortamınızın network erişimlerine göre cron joblar ile otomatik hale getirebilirsiniz. Ya da rutin olarak haftalık aylık bunu yaparak güncelleyebilirsiniz.
 * Fiziksel ortamlar çok sık değişmeyeceğini düşünerek statik olarak farklı bir csv hazırlayıp dashboard'a ekleyebilirsiniz.
-* Bu bir CMDB değildir. Gerektiğinde hızlıca envantere ulaşabilmek hedeflenmiştir. 
+* Bu bir CMDB değildir. Gerektiğinde hızlıca envantere ulaşabilmek hedeflenmiştir.
 
 
