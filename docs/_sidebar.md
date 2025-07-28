@@ -11,6 +11,7 @@
   - [Ansible Lineinfile Modülü ile Yapılandırma](ansible/lineinfile.md)
   - [Ansible ile Linux sunucularda root user password değiştirilmesi](ansible/change-ssh-password.md)
   - [Ansible ile Linux sunucularda root user password değiştirilmesi 2](ansible/change-root-password-random.md)
+  - [Automating User Password Changes and Enforcing Mandatory Password Reset on First Login with Ansible ](ansible/change-user-password.md)
 * [Rancher](/rancher/)
   - [Ansible İle RKE2 Kubernetes Cluster Kurulumu](rancher/rke2clusterinstall.md)
   - [Ansible İle RKE2 Kubernetes Cluster Üzerinde Rancher UI Kurulumu](rancher/rke2installui.md)
