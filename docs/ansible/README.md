@@ -8,3 +8,4 @@
 - [Ansible ile Sudo Yetkili Kullanıcı Oluşturma](./ansible/sudouser)
 - [Ansible ile Linux sunucularda root user password değiştirilmesi](ansible/change-ssh-password.md)
 - [Ansible ile Linux sunucularda root user random password ile değiştirilmesi](ansible/change-root-password-random.md)
+- [Automating User Password Changes and Enforcing Mandatory Password Reset on First Login with Ansible ](ansible/change-user-password.md)
