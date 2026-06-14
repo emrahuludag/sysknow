@@ -13,6 +13,7 @@ Faydalı olması dileğiyle.
 
 # Files
 ```bash
+
 govc-deploy-automation/
 ├── govc-vm-deploy.sh       
 ├── bin/
@@ -23,7 +24,10 @@ govc-deploy-automation/
     └── msvm.csv         
 ```
 
-
+# Repo
+```bash
+https://github.com/emrahuludag/govc-deploy-automation
+```
 
 # Örnek Linux CSV
 ```bash
