@@ -1,4 +1,4 @@
-# VMware vSphere'de Govc ile Bulk VM Deployment
+# VMware vSphere Ortamında govc ile Toplu VM Oluşturma
 
 Büyük ölçekli ortamlarda onlarca sanal makineyi manuel olarak oluşturmak ciddi zaman kayıplarına yol açar.Bu tür ortamlarda genellikle merkezi Ansible, Terraform gibi otomasyon araçları kullanılır. Ancak bazı projelerde süreçler henüz tam olarak hazır olmayabiliyor.
 
