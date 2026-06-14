@@ -1,6 +1,10 @@
 # VMware vSphere'de Govc ile Bulk VM Deployment
 
-Büyük ölçekli ortamlarda onlarca sanal sunucuları tek tek oluşturmak ciddi zaman kayıplarına yol açıyor. Sektörde genellikle sanal sunucu kurulumlarını Ansible ve Terrafom gibi çeşitli opensource çözümler kullanılıyor. Ancak bazen yeni projelerde süreçler tam olarak hazırlanmamış olabiliyor. Örneğin ITSM entegre otomasyon sisteminiz var ise henüz kuracağınız ortamın entegrasyonu yapılmamış veya network erişimleri henüz tamamlanmış olabiliyor. Elinizde bulk olarak oluşturulması gereken bir sunucu listesi var ise kurulum günlerce sürebiliyor. Bulk olarak ortalama 2dk gibi bir sürede vm oluşturabilmek için vmware tarafından opensource olarak geliştirilen govc cli tool'u ile bir script hazırladım.  Bu script ile onlarca vm'i çok kısa sürede otomatik olarak template'den oluşturup hostname,ip,disk gibi disk atamalarını yapabiliriz. 
+Büyük ölçekli ortamlarda onlarca sanal makineyi manuel olarak oluşturmak ciddi zaman kayıplarına yol açar.Bu tür ortamlarda genellikle merkezi Ansible, Terraform gibi otomasyon araçları kullanılır. Ancak bazı projelerde süreçler henüz tam olarak hazır olmayabiliyor.
+
+Örneğin ITSM ile entegre bir otomasyon sisteminiz var ise henüz kuracağınız ortamın entegrasyonu veya network erişimleri henüz tamamlanmış olabiliyor. Bu gibi durumlarda çok sayıda sanal makinenin hızlı şekilde oluşturulması gerekebilir. Bu ihtiyacı karşılamak için VMware tarafından geliştirilen açık kaynak **govc CLI** aracı ile bir otomasyon scripti hazırladım. Bu script sayesinde template üzerinden onlarca sanal makine kısa sürede oluşturulabilir hostname, IP adresi, disk ve temel yapılandırmalar otomatik olarak uygulanabilirsiniz. Saatlerce sürebilecek bir işi hazırlayacağınız bir csv dosyası ile çok kısa sürede tamamlayabilirisiniz.
+
+Faydalı olması dileğiyle.
 
 > govc, VMware tarafından geliştirilen açık kaynak bir CLI aracıdır.govc, VMware tarafından geliştirilen açık kaynak bir CLI aracıdır. VMware'in Go dilinde yazılmış resmi vSphere API istemcisi olan govmomi kütüphanesinin bir parçasıdır VMware'in Broadcom tarafından satın alınmasının ardından proje Broadcom bünyesinde geliştirilmeye devam etmektedir. . GitHub: https://github.com/vmware/govmomi 
 
@@ -244,4 +248,3 @@ Task Complete  : 2m 2s
 
 ```
 
-Faydalı olması dileğiyle.
