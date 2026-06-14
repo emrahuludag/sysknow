@@ -2,8 +2,9 @@
 
 Büyük ölçekli ortamlarda onlarca sanal sunucuları tek tek oluşturmak ciddi zaman kayıplarına yol açıyor. Sektörde genellikle sanal sunucu kurulumlarını Ansible ve Terrafom gibi çeşitli opensource çözümler kullanılıyor. Ancak bazen yeni projelerde süreçler tam olarak hazırlanmamış olabiliyor. Örneğin ITSM entegre otomasyon sisteminiz var ise henüz kuracağınız ortamın entegrasyonu yapılmamış veya network erişimleri henüz tamamlanmış olabiliyor. Elinizde bulk olarak oluşturulması gereken bir sunucu listesi var ise kurulum günlerce sürebiliyor. Bulk olarak ortalama 2dk gibi bir sürede vm oluşturabilmek için vmware tarafından opensource olarak geliştirilen govc cli tool'u ile bir script hazırladım.  Bu script ile onlarca vm'i çok kısa sürede otomatik olarak template'den oluşturup hostname,ip,disk gibi disk atamalarını yapabiliriz. 
 
-# >[!TIP|style:flat]
 > govc, VMware tarafından geliştirilen açık kaynak bir CLI aracıdır.govc, VMware tarafından geliştirilen açık kaynak bir CLI aracıdır. VMware'in Go dilinde yazılmış resmi vSphere API istemcisi olan govmomi kütüphanesinin bir parçasıdır VMware'in Broadcom tarafından satın alınmasının ardından proje Broadcom bünyesinde geliştirilmeye devam etmektedir. . GitHub: https://github.com/vmware/govmomi 
+
+
 > VMware ortamınıza erişen linux bir sunucuda veya Windows WSL'de kullanabiliriz.
 
 # Files
@@ -33,10 +34,33 @@ folder;vmname;hostname;osdisk;disk1;disk2;disk3;cpu;memory;vlan;ip;netmask;gw;dn
 Microsoft;tr-db01;tr-db01;150;0;0;0;4;32;VLAN_703;10.10.10.1;255.255.255.0;10.10.10.254;10.10.0.1;10.10.0.12;domain.local;prod;microsoft
 Microsoft;tr-db02;tr-db02;150;0;0;0;4;16;VLAN_704;10.10.10.2;255.255.255.1;10.10.10.255;10.10.0.1;10.10.0.13;domain.local;prod;microsoft
 Microsoft;tr-db03;tr-db03;150;0;0;0;4;16;VLAN_705;10.10.10.3;255.255.255.2;10.10.10.256;10.10.0.1;10.10.0.14;domain.local;prod;microsoft
-
 ```
 
-# >[!TIP|style:flat]
+# CSV Format
+| Field    | Description                        | Example          |
+|----------|------------------------------------|------------------|
+| folder   | vSphere VM folder name             | Unix             |
+| vmname   | VM display name in vCenter         | tr-lb01          |
+| hostname | Guest OS hostname (FQDN)           | tr-lb01          |
+| osdisk   | OS disk size (GB) — template disk  | 100              |
+| disk1    | Primary data disk (GB)             | 150              |
+| disk2    | Secondary data disk (GB, 0=skip)   | 0                |
+| disk3    | Third data disk (GB, 0=skip)       | 0                |
+| cpu      | vCPU count                         | 4                |
+| memory   | RAM in GB                          | 16               |
+| vlan     | Port group / VLAN name             | VLAN_70          |
+| ip       | Static IP address                  | 10.20.10.1       |
+| netmask  | Subnet mask                        | 255.255.255.0    |
+| gw       | Default gateway                    | 10.20.10.254     |
+| dns1     | Primary DNS server                 | 10.10.11.1       |
+| dns2     | Secondary DNS server               | 10.10.11.2       |
+| domain   | DNS domain / search suffix         | domain.local     |
+| vmenv    | Environment label (annotation)     | prod             |
+| vmteam   | Team label (annotation)            | unix             |
+
+> **Note:** Eger ikinci yada ucuncu disk ihtiyacınız yok ise 0 olarak girmenzi yeterlidir.
+
+# Notlar
 > GOVC_INSECURE=1 varsayılan olarak ayarlanmıştır — self-signed vCenter sertifikaları kabul edilir.
 > Script set -euo pipefail kullanır; herhangi bir govc hatasında işlem anında durur.
 > Her VM için IP bekleme zaman aşımı 5 dakikadır (govc vm.ip -wait 5m).
@@ -46,9 +70,23 @@ Microsoft;tr-db03;tr-db03;150;0;0;0;4;16;VLAN_705;10.10.10.3;255.255.255.2;10.10
 
 
 # Kullanım
+Scripti çalıştırdığınızda aşağıdaki bilgiler sizden istenecek ve sonrasında sırayla vm oluşturulmaya başlayacaktır.
+
+| Prompt              | Description                                      |
+|---------------------|--------------------------------------------------|
+| vCenter URL         | e.g. `https://vcenter.example.local`             |
+| vCenter Username    | e.g. `administrator@vsphere.local`               |
+| vCenter Password    | Entered securely (hidden input)                  |
+| Datacenter          | vSphere datacenter name, e.g. `TR_DC`            |
+| Cluster             | vSphere cluster name, e.g. `TR_CLS`              |
+| Datastore           | Target datastore, e.g. `TR-DS01`                 |
+| Template Name       | VM template name, e.g. `RH9_tmp`, `W2022_tmp`   |
+
+
 ```bash
 git clone https://github.com/emrahuludag/govc-deploy-automation.git
 
+# bash govc-vm-deploy.sh
 ==============================================================================================================
  ░▀█▀░█▀█░█▀▀░█▀▄░█▀█░░░█▀▀░█░░░█▀█░█░█░█▀▄░░░█▀█░█░░░█▀█░▀█▀░█▀▀░█▀█░█▀▄░█▄█░█▀▀░░░▀█▀░█▀▀░█▀█░█▄█
  ░░█░░█░█░█▀▀░█▀▄░█▀█░░░█░░░█░░░█░█░█░█░█░█░░░█▀▀░█░░░█▀█░░█░░█▀▀░█░█░█▀▄░█░█░▀▀█░░░░█░░█▀▀░█▀█░█░█
