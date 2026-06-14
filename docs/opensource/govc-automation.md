@@ -14,13 +14,13 @@ Faydalı olması dileğiyle.
 # Files
 ```bash
 govc-deploy-automation/
-├── govc-vm-deploy.sh        # Main entry point (interactive menu)
+├── govc-vm-deploy.sh       
 ├── bin/
-│   ├── deploy_linux.sh      # Linux VM deployment logic
-│   └── deploy_windows.sh    # Windows VM deployment logic
+│   ├── deploy_linux.sh     
+│   └── deploy_windows.sh   
 └── vms/
-    ├── linuxvm.csv          # Linux VM inventory
-    └── msvm.csv             # Windows VM inventory
+    ├── linuxvm.csv          
+    └── msvm.csv         
 ```
 
 
