@@ -32,16 +32,16 @@ https://github.com/emrahuludag/govc-deploy-automation
 # Örnek Linux CSV
 ```bash
 folder;vmname;hostname;osdisk;disk1;disk2;disk3;cpu;memory;vlan;ip;netmask;gw;dns1;dns2;domain;vmvenv;vmteam
-Unix;tr-lb01;tr-lb01;100;150;0;0;4;16;VLAN_703;10.20.10.1;255.255.255.0;10.20.10.254;10.10.11.1;10.10.11.2;domain.local;prod;unix
-Unix;tr-lb02;tr-lb02;100;150;0;0;4;16;VLAN_703;10.20.10.2;255.255.255.0;10.20.10.254;10.10.11.1;10.10.11.2;domain.local;prod;unix
+Unix;tr-lb01;tr-lb01;100;150;0;0;4;16;VLAN_70;10.20.10.1;255.255.255.0;10.20.10.254;10.10.11.1;10.10.11.2;domain.local;prod;unix
+Unix;tr-lb02;tr-lb02;100;150;0;0;4;16;VLAN_70;10.20.10.2;255.255.255.0;10.20.10.254;10.10.11.1;10.10.11.2;domain.local;prod;unix
 ```
 
 # Örnek Windows CSV
 ```bash
 folder;vmname;hostname;osdisk;disk1;disk2;disk3;cpu;memory;vlan;ip;netmask;gw;dns1;dns2;domain;vmenv;vmteam
-Microsoft;tr-db01;tr-db01;150;0;0;0;4;32;VLAN_703;10.10.10.1;255.255.255.0;10.10.10.254;10.10.0.1;10.10.0.12;domain.local;prod;microsoft
-Microsoft;tr-db02;tr-db02;150;0;0;0;4;16;VLAN_704;10.10.10.2;255.255.255.1;10.10.10.255;10.10.0.1;10.10.0.13;domain.local;prod;microsoft
-Microsoft;tr-db03;tr-db03;150;0;0;0;4;16;VLAN_705;10.10.10.3;255.255.255.2;10.10.10.256;10.10.0.1;10.10.0.14;domain.local;prod;microsoft
+Microsoft;tr-db01;tr-db01;150;0;0;0;4;32;VLAN_60;10.10.10.1;255.255.255.0;10.10.10.254;10.10.0.1;10.10.0.12;domain.local;prod;microsoft
+Microsoft;tr-db02;tr-db02;150;0;0;0;4;16;VLAN_60;10.10.10.2;255.255.255.1;10.10.10.255;10.10.0.1;10.10.0.13;domain.local;prod;microsoft
+Microsoft;tr-db03;tr-db03;150;0;0;0;4;16;VLAN_60;10.10.10.3;255.255.255.2;10.10.10.256;10.10.0.1;10.10.0.14;domain.local;prod;microsoft
 ```
 
 # CSV Format
